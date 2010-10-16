@@ -210,7 +210,17 @@ if (theResult == NO)
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)inConnection
 {
-[self didFinish];
+int statusCode = [(NSHTTPURLResponse *)self.response statusCode];
+if (statusCode >= 400)
+	{
+	NSString *body = [[[NSString alloc] initWithBytes:[self.data bytes] length:[self.data length] encoding:NSUTF8StringEncoding] autorelease];
+	NSError *err = [NSError errorWithDomain:NSURLErrorDomain code:statusCode userInfo:[NSDictionary dictionaryWithObject:body forKey:NSLocalizedDescriptionKey]];
+	[self didFailWithError:err];
+	}
+else
+	{
+	[self didFinish];
+	}
 }
 
 - (void)connection:(NSURLConnection *)inConnection didFailWithError:(NSError *)inError
