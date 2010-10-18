@@ -55,7 +55,7 @@
 
 - (id)initWithRequest:(NSURLRequest *)inRequest
 {
-if ((self = [self init]) != NULL)
+if ((self = [super init]) != NULL)
 	{
 	isExecuting = NO;
 	isFinished = NO;

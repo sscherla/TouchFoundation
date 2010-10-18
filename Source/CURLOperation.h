@@ -51,6 +51,7 @@
 @property (readwrite, copy) NSURLCredential *defaultCredential;
 @property (readwrite, retain) id userInfo;
 
+/// Designated initializer
 - (id)initWithRequest:(NSURLRequest *)inRequest;
 
 - (void)didFinish;
