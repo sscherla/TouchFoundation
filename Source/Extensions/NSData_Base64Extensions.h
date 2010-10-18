@@ -34,7 +34,7 @@
  */
 @interface NSData (NSData_Base64Extensions)
 
-+ (id)dataWithBase64EncodedString:(NSString *)inString NS_RETURNS_RETAINED;
++ (id)dataWithBase64EncodedString:(NSString *)inString;
 - (NSString *)asBase64EncodedString;
 - (NSString *)asBase64EncodedString:(NSInteger)inFlags;
 
