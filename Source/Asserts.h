@@ -29,11 +29,36 @@
 
 #ifdef __OBJC__
 
-	#define LOC_(key, default) \
-		[[NSBundle mainBundle] localizedStringForKey:(key) value:(default) table:NULL]
+	#if !defined(DEBUG) || DEBUG == 0
+		#define NS_BLOCK_ASSERTIONS 1
+	#endif
 
-    #import "Asserts.h"
+	#if DEBUG == 1
+		#define Assert_(test, ...) NSAssert((test), [NSString stringWithFormat:__VA_ARGS__])
 
-    #import <Foundation/Foundation.h>
-	
+		#define AssertC_(test, ...) NSAssertC((test), [NSString stringWithFormat:__VA_ARGS__])
+
+		#define AssertUnimplemented_() NSAssert(0, @"Method unimplemented")
+
+        #define AssertCast_(CLS_, OBJ_) ({ (CLS_ *)(OBJ_); })
+	#else
+		#define Assert_(test, ...) \
+			do \
+				{ \
+				if (!(test)) NSLog(__VA_ARGS__); \
+				} \
+			while (0)
+
+		#define AssertC_(test, ...) Assert_(test, __VA_ARGS__)
+
+		#define AssertUnimplemented_() NSAssert(0, @"Method unimplemented")
+
+        #define AssertCast_(CLS_, OBJ_) ({ \
+            Class theDesiredClass = [CLS_ class]; \
+            id theObject = (OBJ_); \
+            NSAssert2([theObject isKindOfClass:theDesiredClass], @"Object %@ not of class %@", theObject, NSStringFromClass(theDesiredClass)); \
+            (CLS_ *)theObject; \
+            })
+	#endif
+
 #endif
