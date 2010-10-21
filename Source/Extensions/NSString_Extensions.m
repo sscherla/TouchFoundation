@@ -30,7 +30,6 @@
 #import "NSString_Extensions.h"
 
 #import "NSScanner_HTMLExtensions.h"
-#import "NSScanner_Extensions.h"
 
 @implementation NSString (NSString_Extensions)
 
