@@ -53,9 +53,9 @@
 @property (readwrite, assign) BOOL forceReplace;
 @property (readwrite, retain) NSDictionary *storeOptions;
 
-@property (readwrite, retain) NSPersistentStoreCoordinator *persistentStoreCoordinator;
-@property (readwrite, retain) NSManagedObjectModel *managedObjectModel;
-@property (readwrite, retain) NSManagedObjectContext *managedObjectContext;
+@property (readwrite, nonatomic, retain) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+@property (readwrite, nonatomic, retain) NSManagedObjectModel *managedObjectModel;
+@property (readwrite, nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 
 @property (readwrite, assign) id <CCoreDataManagerDelegate> delegate;
 
