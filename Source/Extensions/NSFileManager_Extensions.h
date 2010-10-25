@@ -31,6 +31,11 @@
 
 @interface NSFileManager (NSFileManager_Extensions)
 
++ (NSFileManager *)fileManager;
+
 - (NSString *)mimeTypeForPath:(NSString *)inPath;
+
+- (NSString *)applicationSupportFolder;
+
 
 @end

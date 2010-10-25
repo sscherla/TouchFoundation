@@ -29,10 +29,19 @@
 
 #import "NSFileManager_Extensions.h"
 
+#import <MobileCoreServices/MobileCoreServices.h>
+
 @implementation NSFileManager (NSFileManager_Extensions)
+
++ (NSFileManager *)fileManager;
+    {
+    // TODO One per thread!
+    return([[[NSFileManager alloc] init] autorelease]);
+    }
 
 - (NSString *)mimeTypeForPath:(NSString *)inPath
 {
+
 NSString *thePathExtension = [inPath pathExtension];
 if ([thePathExtension isEqualToString:@"html"])
 	{
@@ -64,5 +73,25 @@ else if ([thePathExtension isEqualToString:@"rtf"])
 	}
 return(@"application/octet-stream");
 }
+
+- (NSString *)applicationSupportFolder
+    {
+    NSArray *thePaths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
+    NSString *theBasePath = ([thePaths count] > 0) ? [thePaths objectAtIndex:0] : NSTemporaryDirectory();
+
+    NSString *theBundleName = [[[[NSBundle mainBundle] bundlePath] lastPathComponent] stringByDeletingPathExtension];
+    NSString *theApplicationSupportFolder = [theBasePath stringByAppendingPathComponent:theBundleName];
+
+    if ([self fileExistsAtPath:theApplicationSupportFolder] == NO)
+        {
+        NSError *theError = NULL;
+        // TODO possible race condition
+        if ([self createDirectoryAtPath:theApplicationSupportFolder withIntermediateDirectories:YES attributes:NULL error:&theError] == NO)
+            return(NULL);
+        }
+
+    return(theApplicationSupportFolder);
+    }
+
 
 @end
