@@ -54,6 +54,8 @@
 /// Designated initializer
 - (id)initWithRequest:(NSURLRequest *)inRequest;
 
+- (void)didReceiveData:(NSData *)inData;
+
 - (void)didFinish;
 - (void)didFailWithError:(NSError *)inError;
 

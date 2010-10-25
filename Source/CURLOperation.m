@@ -129,6 +129,23 @@ self.connection = NULL;
 
 #pragma mark -
 
+- (void)didReceiveData:(NSData *)inData
+{
+NSLog(@"%@", inData);
+
+if (self.temporaryData == NULL)
+	{
+	self.temporaryData = [[[CTemporaryData alloc] initWithDataLimit:64 * 1024] autorelease];
+	}
+NSError *theError = NULL;
+BOOL theResult = [self.temporaryData writeData:inData error:&theError];
+if (theResult == NO)
+	{
+	self.error = theError;
+	[self cancel];
+	}
+}
+
 - (void)didFinish
 {
 [self willChangeValueForKey:@"isFinished"];
@@ -191,17 +208,7 @@ self.response = inResponse;
 
 - (void)connection:(NSURLConnection *)inConnection didReceiveData:(NSData *)inData
 {
-if (self.temporaryData == NULL)
-	{
-	self.temporaryData = [[[CTemporaryData alloc] initWithDataLimit:64 * 1024] autorelease];
-	}
-NSError *theError = NULL;
-BOOL theResult = [self.temporaryData writeData:inData error:&theError];
-if (theResult == NO)
-	{
-	self.error = theError;
-	[self cancel];
-	}
+[self didReceiveData:inData];
 }
 
 //- (void)connection:(NSURLConnection *)inConnection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
