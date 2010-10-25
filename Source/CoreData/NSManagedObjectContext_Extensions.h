@@ -38,4 +38,8 @@
 
 - (id)fetchObjectOfEntityForName:(NSString *)inEntityName predicate:(NSPredicate *)inPredicate createIfNotFound:(BOOL)inCreateIfNotFound wasCreated:(BOOL *)outWasCreated error:(NSError **)outError;
 
+#if NS_BLOCKS_AVAILABLE
+- (BOOL)performTransaction:(void (^)(void))block error:(NSError **)outError;
+#endif /* NS_BLOCKS_AVAILABLE */
+
 @end

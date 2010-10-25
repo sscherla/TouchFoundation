@@ -98,4 +98,56 @@ if (theObject && outWasCreated)
 return(theObject);
 }
 
+#pragma mark -
+
+#if NS_BLOCKS_AVAILABLE
+- (BOOL)performTransaction:(void (^)(void))block error:(NSError **)outError
+    {
+    BOOL theResult = NO;
+    
+    #if 1
+    if ([self hasChanges])
+        {
+        NSLog(@"insertedObjects: %@", [self insertedObjects]);
+        NSLog(@"updatedObjects: %@", [self updatedObjects]);
+        NSLog(@"deletedObjects: %@", [self deletedObjects]);
+        }
+    #endif
+        
+    @try
+        {
+        if (block)
+            {
+            block();
+            }
+        
+        // We only save _if_ we have changes (to prevent notifications from firing).
+        if ([self hasChanges])
+            {
+            theResult = [self save:outError];
+            }
+        }
+    @catch (NSException * e)
+        {
+        if ([self hasChanges])
+            {
+            [self rollback];
+            }
+        
+        if (outError)
+            {
+			NSDictionary *theUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+				[NSString stringWithFormat:@"Exception thrown while performing transaction: %@", e], NSLocalizedDescriptionKey,
+				e, @"exception",
+				NULL];
+            *outError = [NSError errorWithDomain:@"TODO_DOMAIN" code:-1 userInfo:theUserInfo];
+            }
+        }
+    @finally
+        {
+        }
+    return(theResult);
+    }
+#endif /* NS_BLOCKS_AVAILABLE */
+
 @end
