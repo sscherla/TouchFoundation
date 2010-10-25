@@ -28,7 +28,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#if TARGET_OS_IPHONE == 1
 #import <CoreGraphics/CoreGraphics.h>
+#endif
 
 /**
  * @category NSScanner (NSScanner_MoreExtensions)
