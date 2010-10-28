@@ -32,17 +32,18 @@
 // TODO make this look & feel (perhaps even subclass?) NSMutableData
 
 @interface CTemporaryData : NSObject {
-	size_t dataLimit;
+	size_t memoryLimit;
 	id storage;
-	NSURL *tempFileURL;
 }
 
-@property (readonly, assign) size_t dataLimit;
-@property (readonly, retain) NSData *data;
+@property (readonly, nonatomic, assign) size_t memoryLimit;
+@property (readonly, nonatomic, retain) NSData *data;
+@property (readonly, nonatomic, retain) NSURL *URL;
+@property (readonly, nonatomic, assign) size_t length;
 
-- (id)initWithDataLimit:(size_t)inDataLimit;
+- (id)initWithMemoryLimit:(size_t)inDataLimit;
 
-- (BOOL)writeData:(NSData *)inData error:(NSError **)outError;
-- (BOOL)copyDataToURL:(NSURL *)inURL error:(NSError **)outError;
+- (BOOL)appendData:(NSData *)inData error:(NSError **)outError;
+- (BOOL)appendBytes:(void *)inBytes length:(NSUInteger)inLength error:(NSError **)outError;
 
 @end
