@@ -29,7 +29,9 @@
 
 #import "NSFileManager_Extensions.h"
 
+#if TARGET_OS_IPHONE
 #import <MobileCoreServices/MobileCoreServices.h>
+#endif /* TARGET_OS_IPHONE */
 
 @implementation NSFileManager (NSFileManager_Extensions)
 
