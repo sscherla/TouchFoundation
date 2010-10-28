@@ -1,5 +1,5 @@
 //
-//  CTempFile.h
+//  CTemporaryFile.h
 //  TouchCode
 //
 //  Created by Jonathan Wight on 12/29/08.
@@ -29,24 +29,25 @@
 
 #import <Foundation/Foundation.h>
 
-
-@interface CTempFile : NSObject {
+@interface CTemporaryFile : NSObject {
 	BOOL deleteOnDealloc;
+	NSString *prefix;
 	NSString *suffix;
-	NSString *path;
+	NSURL *URL;
 	int fileDescriptor;
 	NSFileHandle *fileHandle;
 }
 
-@property (readwrite, assign) BOOL deleteOnDealloc;
-@property (readwrite, retain) NSString *suffix;
-@property (readonly, retain) NSString *path;
-@property (readonly, assign) int fileDescriptor;
-@property (readonly, retain) NSFileHandle *fileHandle; // JIWTODO - THIS SHOULD NOT BE HERE. Strong binding bad.
+@property (readwrite, nonatomic, assign) BOOL deleteOnDealloc;
+@property (readwrite, nonatomic, retain) NSString *prefix;
+@property (readwrite, nonatomic, retain) NSString *suffix;
+@property (readonly, nonatomic, retain) NSURL *URL;
+@property (readonly, nonatomic, assign) int fileDescriptor;
+@property (readonly, nonatomic, retain) NSFileHandle *fileHandle; // JIWTODO - THIS SHOULD NOT BE HERE. Strong binding bad.
 
 + (NSString *)temporaryDirectory;
 
-+ (CTempFile *)tempFile;
++ (CTemporaryFile *)tempFile;
 
 - (void)create;
 
