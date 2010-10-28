@@ -131,14 +131,12 @@ self.connection = NULL;
 
 - (void)didReceiveData:(NSData *)inData
 {
-NSLog(@"%@", inData);
-
 if (self.temporaryData == NULL)
 	{
-	self.temporaryData = [[[CTemporaryData alloc] initWithDataLimit:64 * 1024] autorelease];
+	self.temporaryData = [[[CTemporaryData alloc] initWithMemoryLimit:64 * 1024] autorelease];
 	}
 NSError *theError = NULL;
-BOOL theResult = [self.temporaryData writeData:inData error:&theError];
+BOOL theResult = [self.temporaryData appendData:inData error:&theError];
 if (theResult == NO)
 	{
 	self.error = theError;
