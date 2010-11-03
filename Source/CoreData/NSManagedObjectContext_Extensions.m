@@ -108,9 +108,22 @@ return(theObject);
     #if 1
     if ([self hasChanges])
         {
-        NSLog(@"insertedObjects: %@", [self insertedObjects]);
-        NSLog(@"updatedObjects: %@", [self updatedObjects]);
-        NSLog(@"deletedObjects: %@", [self deletedObjects]);
+		NSLog(@"Managed object context has unsaved changes and probably shouldn't! (%@)", self);
+		
+		if ([self insertedObjects].count > 0)
+			{
+			NSLog(@"insertedObjects: %@", [self insertedObjects]);
+			}
+
+		if ([self updatedObjects].count > 0)
+			{
+			NSLog(@"updatedObjects: %@", [self updatedObjects]);
+			}
+
+		if ([self deletedObjects].count > 0)
+			{
+			NSLog(@"deletedObjects: %@", [self deletedObjects]);
+			}
         }
     #endif
         
