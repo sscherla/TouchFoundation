@@ -78,6 +78,7 @@ return(@"application/octet-stream");
 
 - (NSString *)applicationSupportFolder
     {
+    // TODO rewrite with URLForDirectory.
     NSArray *thePaths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, YES);
     NSString *theBasePath = ([thePaths count] > 0) ? [thePaths objectAtIndex:0] : NSTemporaryDirectory();
 
