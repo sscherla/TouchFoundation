@@ -29,7 +29,7 @@
 
 #import "CBetterCoreDataManager.h"
 
-//#import "NSError_Extensions.h"
+#import "NSError_Extensions.h"
 
 @interface CBetterCoreDataManager()
 - (void)managedObjectContextDidSaveNotification:(NSNotification *)inNotification;
@@ -77,14 +77,7 @@ if ([NSThread mainThread] != [NSThread currentThread])
 	}
 @catch (NSException * e)
 	{
-	NSLog(@"EXCEPTION RAISED");
-//	NSLog(@"%@", self);
-//	NSLog(@"%@", self.managedObjectContext);
-//	NSLog(@"%@", self.persistentStoreCoordinator);
-//	NSLog(@"%@", [self.persistentStoreCoordinator persistentStores]);
-//	NSLog(@"%@", e);
-//	NSLog(@"%@", inNotification);
-//	[self presentError:[NSError errorWithException:e]];
+	[self presentError:[NSError errorWithException:e]];
 	}
 }
 
