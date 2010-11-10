@@ -31,6 +31,9 @@
 
 @interface NSData (NSData_Extensions)
 
++ (id)dataWithHexString:(NSString *)inHexString;
+
 - (NSString *)hexString;
+- (NSString *)hexString:(BOOL)inLowercase;
 
 @end
