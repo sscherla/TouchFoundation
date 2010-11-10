@@ -54,124 +54,129 @@
 @synthesize userInfo;
 
 - (id)initWithRequest:(NSURLRequest *)inRequest
-{
-if ((self = [super init]) != NULL)
 	{
-	isExecuting = NO;
-	isFinished = NO;
+	if ((self = [super init]) != NULL)
+		{
+		isExecuting = NO;
+		isFinished = NO;
 
-	request = [inRequest copy];
+		request = [inRequest copy];
+		}
+	return(self);
 	}
-return(self);
-}
 
 - (void)dealloc
-{
-[request release];
-request = NULL;
-[connection release];
-connection = NULL;
-[response release];
-response = NULL;
-[error release];
-error = NULL;
-[temporaryData release];
-temporaryData = NULL;
-[defaultCredential release];
-defaultCredential = NULL;
-[userInfo release];
-userInfo = NULL;
-//
-[super dealloc];
-}
+	{
+	[request release];
+	request = NULL;
+	[connection release];
+	connection = NULL;
+	[response release];
+	response = NULL;
+	[error release];
+	error = NULL;
+	[temporaryData release];
+	temporaryData = NULL;
+	[defaultCredential release];
+	defaultCredential = NULL;
+	[userInfo release];
+	userInfo = NULL;
+	//
+	[super dealloc];
+	}
 
 #pragma mark -
 
 - (BOOL)isConcurrent
-{
-return(YES);
-}
+	{
+	return(YES);
+	}
 
 - (NSData *)data
-{
-return(self.temporaryData.data);
-}
+	{
+	return(self.temporaryData.data);
+	}
 
 #pragma mark -
 
 - (void)start
-{
-@try
 	{
-	self.isExecuting = YES;
-	self.connection = [[[NSURLConnection alloc] initWithRequest:self.request delegate:self startImmediately:NO] autorelease];
-//	self.connection = [[[NSURLConnection alloc] initWithRequest:self.request delegate:self] autorelease];
+	@try
+		{
+		self.isExecuting = YES;
+		self.connection = [[[NSURLConnection alloc] initWithRequest:self.request delegate:self startImmediately:NO] autorelease];
+	//	self.connection = [[[NSURLConnection alloc] initWithRequest:self.request delegate:self] autorelease];
 
-	[self.connection scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
-	[self.connection start];
+		[self.connection scheduleInRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
+		[self.connection start];
 
-//	[self.connection performSelectorOnMainThread:@selector(start) withObject:NULL waitUntilDone:YES];
+	//	[self.connection performSelectorOnMainThread:@selector(start) withObject:NULL waitUntilDone:YES];
 
+		}
+	@catch (NSException * e)
+		{
+		NSLog(@"EXCEPTION CAUGHT: %@", e);
+		}
 	}
-@catch (NSException * e)
-	{
-	NSLog(@"EXCEPTION CAUGHT: %@", e);
-	}
-}
 
 - (void)cancel
-{
-[self.connection cancel];
-self.connection = NULL;
-//
-[super cancel];
-}
+	{
+	[self.connection cancel];
+	self.connection = NULL;
+	//
+	[super cancel];
+	}
 
 #pragma mark -
 
 - (void)didReceiveData:(NSData *)inData
-{
-if (self.temporaryData == NULL)
 	{
-	self.temporaryData = [[[CTemporaryData alloc] initWithMemoryLimit:64 * 1024] autorelease];
+	if (self.isCancelled)
+		{
+		return;
+		}
+
+	if (self.temporaryData == NULL)
+		{
+		self.temporaryData = [[[CTemporaryData alloc] initWithMemoryLimit:64 * 1024] autorelease];
+		}
+	NSError *theError = NULL;
+	BOOL theResult = [self.temporaryData appendData:inData error:&theError];
+	if (theResult == NO)
+		{
+		self.error = theError;
+		[self cancel];
+		}
 	}
-NSError *theError = NULL;
-BOOL theResult = [self.temporaryData appendData:inData error:&theError];
-if (theResult == NO)
-	{
-	self.error = theError;
-	[self cancel];
-	}
-}
 
 - (void)didFinish
-{
-[self willChangeValueForKey:@"isFinished"];
-self.isFinished = YES;
-[self didChangeValueForKey:@"isFinished"];
+	{
+	[self willChangeValueForKey:@"isFinished"];
+	self.isFinished = YES;
+	[self didChangeValueForKey:@"isFinished"];
 
-self.isExecuting = NO;
-self.connection = NULL;
-}
+	self.isExecuting = NO;
+	self.connection = NULL;
+	}
 
 - (void)didFailWithError:(NSError *)inError
-{
-self.error = inError;
+	{
+	self.error = inError;
 
-[self willChangeValueForKey:@"isFinished"];
-self.isFinished = YES;
-[self didChangeValueForKey:@"isFinished"];
+	[self willChangeValueForKey:@"isFinished"];
+	self.isFinished = YES;
+	[self didChangeValueForKey:@"isFinished"];
 
-self.isExecuting = NO;
-self.connection = NULL;
-}
+	self.isExecuting = NO;
+	self.connection = NULL;
+	}
 
 #pragma mark -
 
 - (NSURLRequest *)connection:(NSURLConnection *)inConnection willSendRequest:(NSURLRequest *)inRequest redirectResponse:(NSURLResponse *)response
-{
-return(inRequest);
-}
+	{
+	return(inRequest);
+	}
 
 //- (BOOL)connection:(NSURLConnection *)inConnection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace
 //{
@@ -182,14 +187,14 @@ return(inRequest);
 //}
 
 - (void)connection:(NSURLConnection *)inConnection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)inChallenge
-{
-if (self.defaultCredential == NULL || [inChallenge previousFailureCount] > 1)
 	{
-	[[inChallenge sender] cancelAuthenticationChallenge:inChallenge];
-	}
+	if (self.defaultCredential == NULL || [inChallenge previousFailureCount] > 1)
+		{
+		[[inChallenge sender] cancelAuthenticationChallenge:inChallenge];
+		}
 
-[[inChallenge sender] useCredential:self.defaultCredential forAuthenticationChallenge:inChallenge];
-}
+	[[inChallenge sender] useCredential:self.defaultCredential forAuthenticationChallenge:inChallenge];
+	}
 
 //- (void)connection:(NSURLConnection *)inConnection didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 //{
@@ -200,38 +205,38 @@ if (self.defaultCredential == NULL || [inChallenge previousFailureCount] > 1)
 //}
 
 - (void)connection:(NSURLConnection *)inConnection didReceiveResponse:(NSURLResponse *)inResponse
-{
-self.response = inResponse;
-}
+	{
+	self.response = inResponse;
+	}
 
 - (void)connection:(NSURLConnection *)inConnection didReceiveData:(NSData *)inData
-{
-[self didReceiveData:inData];
-}
+	{
+	[self didReceiveData:inData];
+	}
 
 //- (void)connection:(NSURLConnection *)inConnection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
 //{
 //}
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)inConnection
-{
-int statusCode = [(NSHTTPURLResponse *)self.response statusCode];
-if (statusCode >= 400)
 	{
-	NSString *body = [[[NSString alloc] initWithBytes:[self.data bytes] length:[self.data length] encoding:NSUTF8StringEncoding] autorelease];
-	NSError *err = [NSError errorWithDomain:NSURLErrorDomain code:statusCode userInfo:[NSDictionary dictionaryWithObject:body forKey:NSLocalizedDescriptionKey]];
-	[self didFailWithError:err];
+	int statusCode = [(NSHTTPURLResponse *)self.response statusCode];
+	if (statusCode >= 400)
+		{
+		NSString *body = [[[NSString alloc] initWithBytes:[self.data bytes] length:[self.data length] encoding:NSUTF8StringEncoding] autorelease];
+		NSError *err = [NSError errorWithDomain:NSURLErrorDomain code:statusCode userInfo:[NSDictionary dictionaryWithObject:body forKey:NSLocalizedDescriptionKey]];
+		[self didFailWithError:err];
+		}
+	else
+		{
+		[self didFinish];
+		}
 	}
-else
-	{
-	[self didFinish];
-	}
-}
 
 - (void)connection:(NSURLConnection *)inConnection didFailWithError:(NSError *)inError
-{
-[self didFailWithError:inError];
-}
+	{
+	[self didFailWithError:inError];
+	}
 
 //- (NSCachedURLResponse *)connection:(NSURLConnection *)inConnection willCacheResponse:(NSCachedURLResponse *)cachedResponse
 //{
