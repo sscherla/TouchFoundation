@@ -331,9 +331,10 @@ else
 
 + (NSURL *)modelURLForName:(NSString *)inName
 {
-NSString *theModelPath = [[NSBundle mainBundle] pathForResource:inName ofType:@"mom"];
+	//Prefer momd due to bug: http://iphonedevelopment.blogspot.com/2009/09/core-data-migration-problems.html?showComment=1288228237972#c8106487879723961055
+NSString *theModelPath = [[NSBundle mainBundle] pathForResource:inName ofType:@"momd"];
 if (theModelPath == NULL)
-	theModelPath = [[NSBundle mainBundle] pathForResource:inName ofType:@"momd"];
+	theModelPath = [[NSBundle mainBundle] pathForResource:inName ofType:@"mom"];
 NSURL *theModelURL = [NSURL fileURLWithPath:theModelPath];
 return(theModelURL);
 }
