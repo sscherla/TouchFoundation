@@ -109,12 +109,12 @@ return(theResult);
 
 - (BOOL)scanAtMost:(NSUInteger)N charactersFromSet:(NSCharacterSet *)set intoString:(NSString **)value;
 {
-unsigned theCurrentLocation = [self scanLocation];
+NSUInteger theCurrentLocation = [self scanLocation];
 
 NSString *theValue = NULL;
 if ([self scanCharactersFromSet:set intoString:&theValue] == YES)
 	{
-	unsigned theScannedCharacters = [theValue length];
+	NSUInteger theScannedCharacters = [theValue length];
 	if (theScannedCharacters > N)
 		{
 		theValue = [theValue substringToIndex:N];
@@ -134,7 +134,7 @@ else
 
 - (BOOL)scanStringWithinParentheses:(NSString **)outString;
 {
-unsigned theCurrentLocation = [self scanLocation];
+NSUInteger theCurrentLocation = [self scanLocation];
 
 if ([self scanString:@"(" intoString:NULL] == NO)
 	{

@@ -48,7 +48,7 @@ return(theError);
 + (int)errnoForError:(NSError *)inError;
 {
 NSAssert(inError && [[inError domain] isEqualToString:NSPOSIXErrorDomain] == YES, @"Error domain is not NSPOSIXErrorDomain");
-return([inError code]);
+return((int)[inError code]);
 }
 
 + (id)errorWithException:(NSException *)inException

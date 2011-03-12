@@ -134,7 +134,7 @@ return(self);
 
     char theBuffer[theTemplate.length + 1];
     strncpy(theBuffer, [theTemplate UTF8String], theTemplate.length + 1);
-    self.fileDescriptor = mkstemps(theBuffer, self.suffix.length);
+    self.fileDescriptor = mkstemps(theBuffer, (int)self.suffix.length);
     self.URL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:theBuffer]];
     }
 

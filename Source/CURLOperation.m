@@ -220,7 +220,7 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)inConnection
 	{
-	int statusCode = [(NSHTTPURLResponse *)self.response statusCode];
+	NSInteger statusCode = [(NSHTTPURLResponse *)self.response statusCode];
 	if (statusCode >= 400)
 		{
 		NSString *body = [[[NSString alloc] initWithBytes:[self.data bytes] length:[self.data length] encoding:NSUTF8StringEncoding] autorelease];

@@ -53,9 +53,9 @@ return([self asBase64EncodedString:Base64Flags_IncludeNewlines]);
 
 - (NSString *)asBase64EncodedString:(NSInteger)inFlags;
 {
-size_t theEncodedDataSize = EstimateBas64EncodedDataSize([self length], inFlags);
+size_t theEncodedDataSize = EstimateBas64EncodedDataSize([self length], (int32_t)inFlags);
 void *theEncodedData = malloc(theEncodedDataSize);
-Base64EncodeData([self bytes], [self length], theEncodedData, &theEncodedDataSize, inFlags);
+Base64EncodeData([self bytes], [self length], theEncodedData, &theEncodedDataSize, (int32_t)inFlags);
 theEncodedData = reallocf(theEncodedData, theEncodedDataSize);
 if (theEncodedData == NULL)
 	return(NULL);

@@ -25,7 +25,6 @@
 - (void)close;
 
 - (void)readContent;
-- (void)readContent:(NSInteger)inContentLength;
 
 @end
 

@@ -32,7 +32,7 @@
 typedef struct
 	{
 	char *name;
-	NSInteger codePoint;
+	int codePoint;
 	unichar unicode;
 	}
 	HTMLEntity;
@@ -243,7 +243,7 @@ if ([self scanString:@"#" intoString:NULL] == YES)
 			[self setScanLocation:theSavedLocation];
 			return(NO);
 			}
-		const NSInteger theCodePoint = [theString intValue];
+		const int theCodePoint = [theString intValue];
 		NSString *theUnicode = [gEntitiesByCodePoint objectForKey:[NSNumber numberWithInt:theCodePoint]];
 		if (theUnicode == NULL)
 			{

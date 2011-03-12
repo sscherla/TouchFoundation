@@ -15,14 +15,14 @@
 - (NSData *)MD5Digest
     {
     unsigned char theDigest[CC_MD5_DIGEST_LENGTH];
-    CC_MD5([self bytes], [self length], theDigest);
+    CC_MD5([self bytes], (CC_LONG)[self length], theDigest);
     return([NSData dataWithBytes:theDigest length:sizeof(theDigest)]);
     }
 
 - (NSData *)SHA1Digest
     {
     unsigned char theDigest[CC_SHA1_DIGEST_LENGTH];
-    CC_SHA1([self bytes], [self length], theDigest);
+    CC_SHA1([self bytes], (CC_LONG)[self length], theDigest);
     return([NSData dataWithBytes:theDigest length:sizeof(theDigest)]);
     }
 
