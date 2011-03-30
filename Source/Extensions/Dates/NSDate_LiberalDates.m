@@ -1,0 +1,38 @@
+//
+//  NSDateFormatter_LiberalDates.m
+//  DNC
+//
+//  Created by Devin Chalmers on 3/30/11.
+//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//
+
+#import "NSDate_LiberalDates.h"
+
+
+@implementation NSDate (LiberalDates)
+
++ (NSDate *)dateWithInternetString:(NSString *)dateString;
+{
+	NSDate *date = nil;
+	
+	NSLog(@"Date string: %@", dateString);
+	
+	for (NSDateFormatter *formatter in [NSDateFormatter allISO8601DateFormatters]) {
+		date = [formatter dateFromString:dateString];
+		if (date) return date;
+	}
+	
+	for (NSDateFormatter *formatter in [NSDateFormatter allRFC2822DateFormatters]) {
+		date = [formatter dateFromString:dateString];
+		if (date) return date;
+	}
+	
+	for (NSDateFormatter *formatter in [NSDateFormatter allInternetDateFormatters]) {
+		date = [formatter dateFromString:dateString];
+		if (date) return date;
+	}
+	
+	return date;
+}
+
+@end

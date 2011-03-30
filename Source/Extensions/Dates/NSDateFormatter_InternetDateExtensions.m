@@ -137,6 +137,7 @@ static NSArray *sFormatters = NULL;
 		{
 		struct SDateFormatTimeZonePair thePairs[] = {
 			{ .dateFormat = @"yyyy-MM-dd'T'HH:mm:ss'Z'", .timezone = @"UTC" },
+			{ .dateFormat = @"yyyy-MM-dd'T'HH:mm:ss.SS'Z'", .timezone = @"UTC" },
 			{ .dateFormat = @"yyyyMMdd'T'HHmmss'Z'", .timezone = @"UTC" },
 			{ .dateFormat = @"HH:mm:ss'Z'", .timezone = @"UTC" },
 			{ .dateFormat = @"HHmmss'Z'", .timezone = @"UTC" },

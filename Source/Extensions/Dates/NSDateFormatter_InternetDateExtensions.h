@@ -40,5 +40,6 @@
 
 + (NSArray *)allRFC2822DateFormatters;
 + (NSArray *)allISO8601DateFormatters;
++ (NSArray *)allInternetDateFormatters;
 
 @end
