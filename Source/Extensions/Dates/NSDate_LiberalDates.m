@@ -15,8 +15,6 @@
 {
 	NSDate *date = nil;
 	
-	NSLog(@"Date string: %@", dateString);
-	
 	for (NSDateFormatter *formatter in [NSDateFormatter allISO8601DateFormatters]) {
 		date = [formatter dateFromString:dateString];
 		if (date) return date;
