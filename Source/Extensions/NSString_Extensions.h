@@ -34,6 +34,7 @@
 - (NSString *)stringByTidyingHTMLEntities;
 
 - (NSArray *)componentsSeperatedByWhitespaceRunsOrComma;
+- (NSArray *)componentsSeparatedByRunsFromCharacterSet:(NSCharacterSet *)characterSet;
 
 - (long)asLongFromHex;
 

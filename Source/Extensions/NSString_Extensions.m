@@ -65,26 +65,29 @@ return([[theOutput copy] autorelease]);
 
 - (NSArray *)componentsSeperatedByWhitespaceRunsOrComma
 {
-NSMutableArray *theArray = [NSMutableArray array];
-//
-NSMutableCharacterSet *theCommaCharacterSet = [[NSCharacterSet characterSetWithCharactersInString:@","] mutableCopy];
-[theCommaCharacterSet autorelease];
-[theCommaCharacterSet formUnionWithCharacterSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-NSCharacterSet *theNonDelimiterCharacterSet = [theCommaCharacterSet invertedSet];
-//
-NSScanner *theScanner = [NSScanner scannerWithString:self];
-while ([theScanner isAtEnd] == NO)
-	{
-	[theScanner scanCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:NULL];
-	[theScanner scanString:@"," intoString:NULL];
+    NSMutableCharacterSet *theCommaCharacterSet = [[[NSCharacterSet characterSetWithCharactersInString:@","] mutableCopy] autorelease];
+    [theCommaCharacterSet formUnionWithCharacterSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    return [self componentsSeparatedByRunsFromCharacterSet:theCommaCharacterSet];
+}
 
-	NSString *theValue = NULL;
-	if ([theScanner scanCharactersFromSet:theNonDelimiterCharacterSet intoString:&theValue] == YES)
+- (NSArray *)componentsSeparatedByRunsFromCharacterSet:(NSCharacterSet *)characterSet
+{
+    NSMutableArray *theArray = [NSMutableArray array];
+    NSCharacterSet *contentSet = [characterSet invertedSet];
+    
+    NSScanner *theScanner = [NSScanner scannerWithString:self];
+    while (![theScanner isAtEnd])
+	{
+        [theScanner scanCharactersFromSet:characterSet intoString:NULL];
+        
+        NSString *theValue = NULL;
+        if ([theScanner scanCharactersFromSet:contentSet intoString:&theValue] == YES)
 		{
-		[theArray addObject:theValue];
+            [theArray addObject:theValue];
 		}
 	}
-return(theArray);
+    return(theArray);
 }
 
 #pragma mark -
