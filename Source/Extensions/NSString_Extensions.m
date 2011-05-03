@@ -107,5 +107,25 @@ return(theEscapedString);
 return([self stringByAddingPercentEscapesWithCharactersToLeaveUnescaped:@"abcdefghijklmnopqrstuvwyxzABCDEFGHIJKLMNOPQRSTUVWXYZ123456780" legalURLCharactersToBeEscaped:@"/=&?"]);
 }
 
+- (NSString *)stringByFlatteningHTML
+{
+    NSMutableArray *components = [NSMutableArray array];
+    NSScanner *scanner = [NSScanner scannerWithString:self];
+    
+    while (![scanner isAtEnd])
+    {
+        NSString *thisComponent = @"";
+        
+        [scanner scanUpToString:@"<" intoString:&thisComponent];
+        [scanner scanUpToString:@">" intoString:nil];
+        [scanner scanString:@">" intoString:nil];
+        
+        if (thisComponent.length > 0)
+            [components addObject:thisComponent];
+    }
+    
+    NSString *flattenedString = [components componentsJoinedByString:@" "];
+    return flattenedString;
+}
 
 @end

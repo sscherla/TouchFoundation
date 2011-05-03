@@ -41,4 +41,6 @@
 
 - (NSString *)stringByObsessivelyAddingPercentEscapes;
 
+- (NSString *)stringByFlatteningHTML;
+
 @end
