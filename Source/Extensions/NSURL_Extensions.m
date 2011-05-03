@@ -65,9 +65,20 @@ NSMutableArray *theQueryComponents = [NSMutableArray array];
 for (NSString *theKey in inQueryDictionary)
 	{
 	id theValue = [inQueryDictionary objectForKey:theKey];
-	// this fixes the issue of spaces in values. %@ = [value description]
-	NSString *tempValue = [theValue description];
-	[theQueryComponents addObject:[NSString stringWithFormat:@"%@=%@", theKey, [tempValue stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
+    if ([theValue isKindOfClass:[NSArray class]])
+        {
+        for (id subValue in theValue)
+            {
+            NSString *tempSubValue = [subValue description];
+            [theQueryComponents addObject:[NSString stringWithFormat:@"%@=%@", theKey, [tempSubValue stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
+            }
+        }
+    else
+        {
+        // this fixes the issue of spaces in values. %@ = [value description]
+        NSString *tempValue = [theValue description];
+        [theQueryComponents addObject:[NSString stringWithFormat:@"%@=%@", theKey, [tempValue stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
+        }
 	}
 return([theQueryComponents componentsJoinedByString:@"&"]);
 }
