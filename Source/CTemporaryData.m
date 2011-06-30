@@ -153,7 +153,7 @@
     {
     if (self.storage == NULL)
         {
-        self.storage = [[inData mutableCopy] retain];
+        self.storage = [[inData mutableCopy] autorelease];
         }
     else if ([self.storage isKindOfClass:[CTemporaryFile class]])
         {
