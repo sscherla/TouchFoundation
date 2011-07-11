@@ -1,9 +1,9 @@
 //
 //  NSDateFormatter_LiberalDates.m
-//  DNC
+//  TouchFoundation
 //
 //  Created by Devin Chalmers on 3/30/11.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//  Copyright 2011 Devin Chalmers. All rights reserved.
 //
 
 #import "NSDate_LiberalDates.h"
