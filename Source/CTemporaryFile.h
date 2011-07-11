@@ -50,5 +50,6 @@
 + (CTemporaryFile *)tempFile;
 
 - (void)create;
+- (void)close;
 
 @end

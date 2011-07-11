@@ -69,15 +69,7 @@ return(self);
 
 - (void)dealloc
     {
-    if (fileHandle)
-        {
-        [fileHandle synchronizeFile];
-        [fileHandle closeFile];
-        [fileHandle release];
-        fileHandle = NULL;
-        }
-
-    fileDescriptor = -1;
+	[self close];
 
     if (deleteOnDealloc == YES && URL != NULL)
         {
@@ -137,5 +129,19 @@ return(self);
     self.fileDescriptor = mkstemps(theBuffer, (int)self.suffix.length);
     self.URL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:theBuffer]];
     }
+
+
+- (void)close
+	{
+	if (fileHandle > 0)
+		{
+        [fileHandle synchronizeFile];
+        [fileHandle closeFile];
+        [fileHandle release];
+        fileHandle = nil;
+		}
+	
+    fileDescriptor = -1;
+	}
 
 @end
