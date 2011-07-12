@@ -32,8 +32,8 @@
 #import "ISO8601DateFormatter.h"
 
 struct SDateFormatTimeZonePair {
-	NSString *dateFormat;
-	NSString *timezone;
+	void *dateFormat;
+	void *timezone;
 };
 
 @implementation NSDateFormatter (NSDateFormatter_InternetDateExtensions)
@@ -113,9 +113,9 @@ static NSArray *sFormatters = NULL;
 			NSDateFormatter *theFormatter = [[[NSDateFormatter alloc] init] autorelease];
 			[theFormatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"] autorelease]];
 			[theFormatter setFormatterBehavior:NSDateFormatterBehavior10_4];
-			[theFormatter setDateFormat:thePairs[N].dateFormat];
+			[theFormatter setDateFormat:(__bridge NSString *)thePairs[N].dateFormat];
 			if (thePairs[N].timezone)
-				[theFormatter setTimeZone:[NSTimeZone timeZoneWithName:thePairs[N].timezone]];
+				[theFormatter setTimeZone:[NSTimeZone timeZoneWithName:(__bridge NSString *)thePairs[N].timezone]];
 
 			[theFormatters addObject:theFormatter];
 			}
@@ -158,11 +158,11 @@ static NSArray *sFormatters = NULL;
 			NSDateFormatter *theFormatter = [[[NSDateFormatter alloc] init] autorelease];
 			[theFormatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"] autorelease]];
 			[theFormatter setFormatterBehavior:NSDateFormatterBehavior10_4];
-			[theFormatter setDateFormat:thePairs[N].dateFormat];
+			[theFormatter setDateFormat:(__bridge NSString *)thePairs[N].dateFormat];
 			[theFormatter setDefaultDate:NULL];
 			[theFormatter setLenient:NO];
 			if (thePairs[N].timezone)
-				[theFormatter setTimeZone:[NSTimeZone timeZoneWithName:thePairs[N].timezone]];
+				[theFormatter setTimeZone:[NSTimeZone timeZoneWithName:(__bridge NSString *)thePairs[N].timezone]];
 
 			[theFormatters addObject:theFormatter];
 			}

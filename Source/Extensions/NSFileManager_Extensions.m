@@ -45,14 +45,15 @@
     {
     NSString *thePathExtension = [inPath pathExtension];
 
-    CFStringRef thePreferredIdentifier = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)thePathExtension, NULL);
+    CFStringRef thePreferredIdentifier = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (__bridge CFStringRef)thePathExtension, NULL);
     if (thePreferredIdentifier)
         {
-        CFStringRef theMIMEType = UTTypeCopyPreferredTagWithClass(thePreferredIdentifier, kUTTagClassMIMEType);
-
-        CFRelease(thePreferredIdentifier);
-
-        return([(id)theMIMEType autorelease]);
+        CFStringRef theCFMimeType = UTTypeCopyPreferredTagWithClass(thePreferredIdentifier, kUTTagClassMIMEType);
+        
+        NSString *theMimeType = [NSString stringWithString:(__bridge NSString *)theCFMimeType];
+        
+        CFRelease(theCFMimeType);
+        return(theMimeType);
         }
 
 
