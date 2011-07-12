@@ -42,39 +42,51 @@
     }
 
 - (NSString *)mimeTypeForPath:(NSString *)inPath
-{
+    {
+    NSString *thePathExtension = [inPath pathExtension];
 
-NSString *thePathExtension = [inPath pathExtension];
-if ([thePathExtension isEqualToString:@"html"])
-	{
-	return(@"text/html");
-	}
-else if ([thePathExtension isEqualToString:@"png"])
-	{
-	return(@"image/png");
-	}
-else if ([thePathExtension isEqualToString:@"css"])
-	{
-	return(@"text/css");
-	}
-else if ([thePathExtension isEqualToString:@"jpg"])
-	{
-	return(@"image/jpeg");
-	}
-else if ([thePathExtension isEqualToString:@"gif"])
-	{
-	return(@"image/gif");
-	}
-else if ([thePathExtension isEqualToString:@"js"])
-	{
-	return(@"text/javascript");
-	}
-else if ([thePathExtension isEqualToString:@"rtf"])
-	{
-	return(@"application/rtf");
-	}
-return(@"application/octet-stream");
-}
+    CFStringRef thePreferredIdentifier = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)thePathExtension, NULL);
+    if (thePreferredIdentifier)
+        {
+        CFStringRef theMIMEType = UTTypeCopyPreferredTagWithClass(thePreferredIdentifier, kUTTagClassMIMEType);
+
+        CFRelease(thePreferredIdentifier);
+
+        return([(id)theMIMEType autorelease]);
+        }
+
+
+
+    if ([thePathExtension isEqualToString:@"html"])
+        {
+        return(@"text/html");
+        }
+    else if ([thePathExtension isEqualToString:@"png"])
+        {
+        return(@"image/png");
+        }
+    else if ([thePathExtension isEqualToString:@"css"])
+        {
+        return(@"text/css");
+        }
+    else if ([thePathExtension isEqualToString:@"jpg"])
+        {
+        return(@"image/jpeg");
+        }
+    else if ([thePathExtension isEqualToString:@"gif"])
+        {
+        return(@"image/gif");
+        }
+    else if ([thePathExtension isEqualToString:@"js"])
+        {
+        return(@"text/javascript");
+        }
+    else if ([thePathExtension isEqualToString:@"rtf"])
+        {
+        return(@"application/rtf");
+        }
+    return(@"application/octet-stream");
+    }
 
 - (NSString *)applicationSupportFolder
     {
