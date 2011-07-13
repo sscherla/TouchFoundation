@@ -49,13 +49,15 @@
     if (thePreferredIdentifier)
         {
         CFStringRef theCFMimeType = UTTypeCopyPreferredTagWithClass(thePreferredIdentifier, kUTTagClassMIMEType);
+        if (theCFMimeType != NULL)
+            {
         
-        NSString *theMimeType = [NSString stringWithString:(__bridge NSString *)theCFMimeType];
-        
-        CFRelease(theCFMimeType);
-        return(theMimeType);
+            NSString *theMimeType = [NSString stringWithString:(__bridge NSString *)theCFMimeType];
+            
+            CFRelease(theCFMimeType);
+            return(theMimeType);
+            }
         }
-
 
 
     if ([thePathExtension isEqualToString:@"html"])

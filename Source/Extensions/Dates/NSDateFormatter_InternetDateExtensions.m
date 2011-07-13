@@ -44,8 +44,8 @@ struct SDateFormatTimeZonePair {
 
 + (NSDateFormatter *)RFC2822Formatter;
 {
-NSDateFormatter *theFormatter = [[[NSDateFormatter alloc] init] autorelease];
-[theFormatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"] autorelease]];
+NSDateFormatter *theFormatter = [[NSDateFormatter alloc] init];
+[theFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
 [theFormatter setFormatterBehavior:NSDateFormatterBehavior10_4];
 [theFormatter setDateFormat:@"EEE, d MMM yyyy HH:mm:ss ZZ"];
 return(theFormatter);
@@ -53,8 +53,8 @@ return(theFormatter);
 
 + (NSDateFormatter *)RFC2822FormatterGMT;
 {
-NSDateFormatter *theFormatter = [[[NSDateFormatter alloc] init] autorelease];
-[theFormatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"] autorelease]];
+NSDateFormatter *theFormatter = [[NSDateFormatter alloc] init];
+[theFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
 [theFormatter setFormatterBehavior:NSDateFormatterBehavior10_4];
 [theFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
 [theFormatter setDateFormat:@"EEE, d MMM yyyy HH:mm:ss 'GMT'"];
@@ -63,7 +63,7 @@ return(theFormatter);
 
 + (NSDateFormatter *)RFC2822FormatterUTC;
 {
-NSDateFormatter *theFormatter = [[[NSDateFormatter alloc] init] autorelease];
+NSDateFormatter *theFormatter = [[NSDateFormatter alloc] init];
 [theFormatter setFormatterBehavior:NSDateFormatterBehavior10_4];
 [theFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
 [theFormatter setDateFormat:@"EEE, d MMM yyyy HH:mm:ss 'UTC'"];
@@ -73,8 +73,8 @@ return(theFormatter);
 
 + (NSDateFormatter *)ISO8601Formatter
 {
-NSDateFormatter *theFormatter = [[[NSDateFormatter alloc] init] autorelease];
-[theFormatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"] autorelease]];
+NSDateFormatter *theFormatter = [[NSDateFormatter alloc] init];
+[theFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
 [theFormatter setFormatterBehavior:NSDateFormatterBehavior10_4];
 [theFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
 [theFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss'Z'"];
@@ -83,8 +83,8 @@ return(theFormatter);
 
 + (NSDateFormatter *)ISO8601FormatterMinimal
 {
-NSDateFormatter *theFormatter = [[[NSDateFormatter alloc] init] autorelease];
-[theFormatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"] autorelease]];
+NSDateFormatter *theFormatter = [[NSDateFormatter alloc] init];
+[theFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
 [theFormatter setFormatterBehavior:NSDateFormatterBehavior10_4];
 [theFormatter setTimeZone:[NSTimeZone timeZoneWithName:@"UTC"]];
 [theFormatter setDateFormat:@"yyyyMMdd'T'HHmmss'Z'"];
@@ -110,8 +110,8 @@ static NSArray *sFormatters = NULL;
 		NSMutableArray *theFormatters = [NSMutableArray array];
 		for (int N = 0; thePairs[N].dateFormat != NULL; ++N)
 			{
-			NSDateFormatter *theFormatter = [[[NSDateFormatter alloc] init] autorelease];
-			[theFormatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"] autorelease]];
+			NSDateFormatter *theFormatter = [[NSDateFormatter alloc] init];
+			[theFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
 			[theFormatter setFormatterBehavior:NSDateFormatterBehavior10_4];
 			[theFormatter setDateFormat:(__bridge NSString *)thePairs[N].dateFormat];
 			if (thePairs[N].timezone)
@@ -155,8 +155,8 @@ static NSArray *sFormatters = NULL;
 		NSMutableArray *theFormatters = [NSMutableArray array];
 		for (int N = 0; thePairs[N].dateFormat != NULL; ++N)
 			{
-			NSDateFormatter *theFormatter = [[[NSDateFormatter alloc] init] autorelease];
-			[theFormatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"] autorelease]];
+			NSDateFormatter *theFormatter = [[NSDateFormatter alloc] init];
+			[theFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
 			[theFormatter setFormatterBehavior:NSDateFormatterBehavior10_4];
 			[theFormatter setDateFormat:(__bridge NSString *)thePairs[N].dateFormat];
 			[theFormatter setDefaultDate:NULL];
@@ -193,8 +193,8 @@ static NSArray *sFormatters = NULL;
 
 		for (NSString *theFormat in theFormats)
 			{
-			NSDateFormatter *theFormatter = [[[NSDateFormatter alloc] init] autorelease];
-			[theFormatter setLocale:[[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"] autorelease]];
+			NSDateFormatter *theFormatter = [[NSDateFormatter alloc] init];
+			[theFormatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US"]];
 			[theFormatter setFormatterBehavior:NSDateFormatterBehavior10_4];
 			[theFormatter setDateFormat:theFormat];
 			[theFormatters addObject:theFormatter];
