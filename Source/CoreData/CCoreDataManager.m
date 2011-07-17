@@ -46,6 +46,8 @@
 + (NSURL *)persistentStoreURLForName:(NSString *)inName storeType:(NSString *)inStoreType forceReplace:(BOOL)inForceReplace;
 + (NSString *)applicationSupportFolder;
 - (id)threadStorageKey;
+
+- (void)applicationWillTerminate:(NSNotification *)inNotification;
 @end
 
 #pragma mark -
