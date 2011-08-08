@@ -68,7 +68,7 @@
 				char LO = digits[*INX++];
 				if (LO >= 0)
 					{
-					*OUTX++ = HI << 4 | LO;
+					*OUTX++ = (char)(HI << 4 | LO);
 					break;
 					}
 				}
