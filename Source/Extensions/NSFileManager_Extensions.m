@@ -49,9 +49,9 @@
     if (thePreferredIdentifier)
         {
         CFStringRef theCFMimeType = UTTypeCopyPreferredTagWithClass(thePreferredIdentifier, kUTTagClassMIMEType);
+        CFRelease(thePreferredIdentifier);
         if (theCFMimeType != NULL)
             {
-        
             NSString *theMimeType = [NSString stringWithString:(__bridge NSString *)theCFMimeType];
             
             CFRelease(theCFMimeType);
