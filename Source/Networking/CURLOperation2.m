@@ -32,22 +32,11 @@
     return(self);
     }
 
-- (void)dealloc
-    {
-
-    //
-    [super dealloc];
-    }
-
 - (void)main
     {
-    NSAutoreleasePool *thePool = [[NSAutoreleasePool alloc] init];
-    
-    CHTTPClient *theClient = [[[CHTTPClient alloc] initWithRequest:self.request] autorelease];
+    CHTTPClient *theClient = [[CHTTPClient alloc] initWithRequest:self.request];
     theClient.delegate = self;
     [theClient main];
-        
-    [thePool release];
     }
 
 #pragma mark -

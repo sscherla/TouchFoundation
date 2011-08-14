@@ -27,7 +27,7 @@
     
 - (NSDictionary *)allHeaderFields
     {
-    return([(id)CFHTTPMessageCopyAllHeaderFields(message) autorelease]);
+    return((__bridge_transfer id)CFHTTPMessageCopyAllHeaderFields(message));
     }
 
 

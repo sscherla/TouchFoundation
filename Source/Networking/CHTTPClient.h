@@ -13,21 +13,11 @@
 @protocol CHTTPClientDelegate;
 
 @interface CHTTPClient : NSObject {
-    NSURLRequest *request;
-    CFReadStreamRef readStream;
-    NSUInteger initialBufferLength;
-    NSMutableData *initialBuffer;
-    NSUInteger bufferLength;
-    NSMutableData *buffer;
-    CTemporaryData *data;
-    CFHTTPMessageRef requestMessage;
-    CFHTTPMessageRef responseMessage;
-    id <CHTTPClientDelegate> delegate;  
 }
 
 @property (readwrite, nonatomic, assign) NSUInteger initialBufferLength;
 @property (readwrite, nonatomic, assign) NSUInteger bufferLength;
-@property (readwrite, nonatomic, assign) id <CHTTPClientDelegate> delegate;    
+@property (readwrite, nonatomic, weak) id <CHTTPClientDelegate> delegate;    
 
 - (id)initWithRequest:(NSURLRequest *)inRequest;
 

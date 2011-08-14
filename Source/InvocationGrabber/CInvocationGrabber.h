@@ -41,8 +41,6 @@ Note this version is all new and the syntax is a lot more compact. This version 
 WARNING: Does not seem to work with methods that take vararg style arguments (...), e.g. -[NSMutableString appendFormat:] etc.
  */
 @interface CInvocationGrabber : NSProxy {
-	id target;
-	NSInvocation **invocationDestination;
 }
 
 + (id)grabInvocation:(NSInvocation **)outInvocation fromTarget:(id)inTarget;

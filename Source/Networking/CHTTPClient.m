@@ -47,7 +47,7 @@
     {
     if ((self = [super init]) != NULL)
         {
-        request = [inRequest retain];
+        request = inRequest;
         initialBufferLength = 32 * 1024;
         bufferLength = 32 * 1024;
         }
@@ -56,23 +56,11 @@
 
 - (void)dealloc
     {
-    [request release];
-    request = NULL;
-    
     if (readStream)
         {
         CFRelease(readStream);
         readStream = NULL;
         }
-    
-    [initialBuffer release];
-    initialBuffer = NULL;
-
-    [buffer release];
-    buffer = NULL;
-    
-    [data release];
-    data = NULL;
     
     if (requestMessage)
         {
@@ -85,8 +73,6 @@
         CFRelease(responseMessage);
         responseMessage = NULL;
         }
-    //
-    [super dealloc];
     }
 
 #pragma mark -
@@ -111,8 +97,8 @@
 
 - (void)open
     {
-    self.requestMessage = CFHTTPMessageCreateRequest(kCFAllocatorDefault, CFSTR("GET"), (CFURLRef)self.request.URL, kCFHTTPVersion1_1);
-    CFHTTPMessageSetHeaderFieldValue(self.requestMessage, CFSTR("Host"), (CFStringRef)self.request.URL.host);
+    self.requestMessage = CFHTTPMessageCreateRequest(kCFAllocatorDefault, CFSTR("GET"), (__bridge CFURLRef)self.request.URL, kCFHTTPVersion1_1);
+    CFHTTPMessageSetHeaderFieldValue(self.requestMessage, CFSTR("Host"), (__bridge CFStringRef)self.request.URL.host);
 
     self.initialBuffer = [NSMutableData dataWithLength:self.initialBufferLength];
     self.buffer = [NSMutableData dataWithLength:self.bufferLength];
@@ -132,17 +118,17 @@
     
     if ([self.delegate respondsToSelector:@selector(httpClient:didReceiveResponse:)])
         {
-        CMyURLResponse *theResponse = [[[CMyURLResponse alloc] initWithMessage:self.responseMessage] autorelease];
+        CMyURLResponse *theResponse = [[CMyURLResponse alloc] initWithMessage:self.responseMessage];
         [self.delegate httpClient:self didReceiveResponse:theResponse];
         }
     
     CFIndex theStatusCode = CFHTTPMessageGetResponseStatusCode(self.responseMessage);
-    NSDictionary *theRequestHeaders = [(id)CFHTTPMessageCopyAllHeaderFields(self.requestMessage) autorelease];
+    NSDictionary *theRequestHeaders = (__bridge_transfer id)CFHTTPMessageCopyAllHeaderFields(self.requestMessage);
 
-    NSDictionary *theResponseHeaders = [(id)CFHTTPMessageCopyAllHeaderFields(self.responseMessage) autorelease];
+    NSDictionary *theResponseHeaders = (__bridge_transfer id)CFHTTPMessageCopyAllHeaderFields(self.responseMessage);
     if (theStatusCode == 401)
         {
-        if ([(id)theRequestHeaders objectForKey:@"Authorization"])
+        if ([theRequestHeaders objectForKey:@"Authorization"])
             {
             NSLog(@"Bad auth");
             return;
@@ -208,7 +194,7 @@
 
 - (void)readContent
     {
-    self.data = [[[CTemporaryData alloc] initWithMemoryLimit:1 * 1024 * 1024] autorelease];
+    self.data = [[CTemporaryData alloc] initWithMemoryLimit:1 * 1024 * 1024];
     [self.data appendData:(id)self.initialBuffer error:NULL];
 
     do

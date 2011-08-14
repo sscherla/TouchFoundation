@@ -37,7 +37,7 @@ NSInvocation *theInvocation = [theInvocationGrabber invocation];
 
 @interface CInvocationGrabber ()
 @property (readwrite, retain) id target;
-@property (readwrite, assign) NSInvocation **invocationDestination;
+@property (readwrite, assign) NSInvocation * __autoreleasing *invocationDestination;
 @end
 
 @implementation CInvocationGrabber
@@ -47,7 +47,7 @@ NSInvocation *theInvocation = [theInvocationGrabber invocation];
 
 + (id)grabInvocation:(NSInvocation **)outInvocation fromTarget:(id)inTarget;
 {
-CInvocationGrabber *theGrabber = [[[self alloc] init] autorelease];
+CInvocationGrabber *theGrabber = [[self alloc] init];
 theGrabber.target = inTarget;
 theGrabber.invocationDestination = outInvocation;
 return(theGrabber);
@@ -61,8 +61,6 @@ return(self);
 - (void)dealloc
 {
 self.target = NULL;
-//
-[super dealloc];
 }
 
 #pragma mark -
@@ -103,7 +101,7 @@ if (self.invocationDestination)
 
 + (id)grabInvocationFromTarget:(id)inTarget andPeformOnMainThreadWaitUntilDone:(BOOL)inWaitUntilDone
 {
-CThreadingInvocationGrabber *theGrabber = [[[self alloc] init] autorelease];
+CThreadingInvocationGrabber *theGrabber = [[self alloc] init];
 theGrabber.target = inTarget;
 theGrabber.waitUntilDone = inWaitUntilDone;
 return(theGrabber);
