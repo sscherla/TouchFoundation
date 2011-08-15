@@ -68,4 +68,12 @@
 		#define AssertOnMainThread_() Assert_([NSThread isMainThread], @"Need to be on main thread.")
 	#endif
 
+    #define AbortIf_(test, ...) do { \
+        if ((test)) { \
+            NSLog(@"%@", [NSString stringWithFormat:__VA_ARGS__]); \
+            abort(); \
+            }; \
+        } while(0);
+
+
 #endif
