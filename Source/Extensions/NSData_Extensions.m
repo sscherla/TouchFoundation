@@ -75,7 +75,7 @@
 			}
 		}
 		
-	theData.length = OUTX - OUT;
+	theData.length = (NSUInteger)(OUTX - OUT);
 	return([theData copy]);
 	}
 
@@ -98,7 +98,7 @@
 	size_t INX = 0;
 	for (; INX < theLength; ++INX)
 		{
-		const UInt8 theOctet = IN[INX];
+		const UInt8 theOctet = (UInt8)IN[INX];
 		*OUT++ = theHexTable[(theOctet >> 4) & 0x0F];
 		*OUT++ = theHexTable[theOctet & 0x0F];
 		}
