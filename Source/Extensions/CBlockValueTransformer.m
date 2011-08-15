@@ -28,6 +28,14 @@
     return self;
     }
 
+- (id)initWithBlock:(id (^)(id))inBlock;
+    {
+    if ((self = [self initWithBlock:inBlock reverseBlock:NULL]) != NULL)
+        {
+        }
+    return self;
+    }
+
 - (id)transformedValue:(id)value
     {
     return(self.block(value));

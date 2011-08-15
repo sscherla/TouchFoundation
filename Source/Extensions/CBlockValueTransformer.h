@@ -11,5 +11,6 @@
 @interface CBlockValueTransformer : NSValueTransformer
 
 - (id)initWithBlock:(id (^)(id))inBlock reverseBlock:(id (^)(id))inReverseBlock;
+- (id)initWithBlock:(id (^)(id))inBlock;
 
 @end
