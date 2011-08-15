@@ -38,34 +38,34 @@
 
 		#define AssertC_(test, ...) NSAssertC((test), [NSString stringWithFormat:__VA_ARGS__])
 
+		#define AssertParameter_(test) NSParameterAssert((test))
+
 		#define AssertUnimplemented_() Assert_(0, @"Method unimplemented")
 
 		#define AssertCast_(CLS_, OBJ_) ({ \
-			id theObject = (OBJ_); \
-			if (theObject != NULL) \
+			id theObject_ = (OBJ_); \
+			if (theObject_ != NULL) \
 				{ \
-				Class theDesiredClass = [CLS_ class]; \
-				NSAssert2([theObject isKindOfClass:theDesiredClass], @"Object %@ not of class %@", theObject, NSStringFromClass(theDesiredClass)); \
+				Class theDesiredClass_ = [CLS_ class]; \
+				NSAssert2([theObject_ isKindOfClass:theDesiredClass_], @"Object %@ not of class %@", theObject_, NSStringFromClass(theDesiredClass_)); \
 				} \
-			(CLS_ *)theObject; \
+			(CLS_ *)theObject_; \
 			})
 
-		#define AssertOnMainThread_()
+		#define AssertOnMainThread_() Assert([NSThread isMainThread], @"Should be on main thread");
 	#else
-		#define Assert_(test, ...) \
-			do \
-				{ \
-				if (!(test)) NSLog(__VA_ARGS__); \
-				} \
-			while (0)
+		#define Assert_(test, ...) ((void) 0)
 
-		#define AssertC_(test, ...) Assert_(test, __VA_ARGS__)
+		#define AssertC_(test, ...) ((void) 0)
 
-		#define AssertUnimplemented_() Assert_(0, @"Method unimplemented")
+        #define AssertParameter_(test) ((void) 0)
+
+		#define AssertUnimplemented_() ((void) 0)
 
 		#define AssertCast_(CLS_, OBJ_) ({ (CLS_ *)(OBJ_); })
 
-		#define AssertOnMainThread_() Assert_([NSThread isMainThread], @"Need to be on main thread.")
+		#define AssertOnMainThread_() ((void) 0)
+
 	#endif
 
     #define AbortIf_(test, ...) do { \
