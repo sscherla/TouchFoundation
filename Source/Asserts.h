@@ -52,7 +52,7 @@
 			(CLS_ *)theObject_; \
 			})
 
-		#define AssertOnMainThread_() Assert([NSThread isMainThread], @"Should be on main thread");
+		#define AssertOnMainThread_() Assert_([NSThread isMainThread], @"Should be on main thread");
 	#else
 		#define Assert_(test, ...) ((void) 0)
 
