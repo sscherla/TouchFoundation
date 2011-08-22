@@ -25,14 +25,14 @@
 
 static void *KVO;
 
-- (id)addKVOBlock:(KVOBlock)inBlock forKeyPath:(NSString *)inKeyPath options:(NSUInteger)inOptions;
+- (id)addKVOBlockForKeyPath:(NSString *)inKeyPath options:(NSUInteger)inOptions handler:(KVOBlock)inHandler;
     {
-    return([self addKVOBlock:inBlock forKeyPath:inKeyPath options:inOptions identifier:NULL]);
+    return([self addKVOBlockForKeyPath:inKeyPath options:inOptions identifier:NULL handler:inHandler]);
     }
 
-- (id)addKVOBlock:(KVOBlock)inBlock forKeyPath:(NSString *)inKeyPath options:(NSKeyValueObservingOptions)inOptions identifier:(NSString *)inIdentifier
+- (id)addKVOBlockForKeyPath:(NSString *)inKeyPath options:(NSUInteger)inOptions identifier:(NSString *)inIdentifier handler:(KVOBlock)inHandler;
     {
-    NSParameterAssert(inBlock);
+    NSParameterAssert(inHandler);
     NSParameterAssert(inKeyPath);
 
     if (inIdentifier == NULL)
@@ -53,7 +53,7 @@ static void *KVO;
         [self removeObserver:theHelper forKeyPath:inKeyPath context:theContext];
         }
     
-    [theHelper.blocksForIdentifier setObject:[inBlock copy] forKey:theKey];
+    [theHelper.blocksForIdentifier setObject:[inHandler copy] forKey:theKey];
     
     void *theContext = (__bridge void *)[theHelper canonicalKeyForKey:theKey];
     [self addObserver:theHelper forKeyPath:inKeyPath options:inOptions context:theContext];

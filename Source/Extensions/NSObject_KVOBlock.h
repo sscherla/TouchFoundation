@@ -12,8 +12,8 @@ typedef void (^KVOBlock)(NSString *keyPath, id object, NSDictionary *change);
 
 @interface NSObject (NSObject_KVOBlock)
 
-- (id)addKVOBlock:(KVOBlock)inBlock forKeyPath:(NSString *)inKeyPath options:(NSUInteger)inOptions;
-- (id)addKVOBlock:(KVOBlock)inBlock forKeyPath:(NSString *)inKeyPath options:(NSUInteger)inOptions identifier:(NSString *)inIdentifier;
+- (id)addKVOBlockForKeyPath:(NSString *)inKeyPath options:(NSUInteger)inOptions handler:(KVOBlock)inHandler;
+- (id)addKVOBlockForKeyPath:(NSString *)inKeyPath options:(NSUInteger)inOptions identifier:(NSString *)inIdentifier handler:(KVOBlock)inHandler;
 
 - (void)removeKVOBlockForToken:(id)inToken;
 - (void)removeKVOBlockForKeyPath:(NSString *)inKeyPath identifier:(NSString *)inIdentifier;
