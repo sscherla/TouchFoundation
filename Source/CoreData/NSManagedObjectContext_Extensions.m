@@ -101,7 +101,7 @@ return(theObject);
 #pragma mark -
 
 #if NS_BLOCKS_AVAILABLE
-// TODO - should we remove this now that CoreData has it's own support for blocks
+// TODO: should we remove this now that CoreData has it's own support for blocks
 - (BOOL)performTransaction:(void (^)(void))block error:(NSError **)outError
     {
     BOOL theResult = NO;
