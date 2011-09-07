@@ -70,7 +70,7 @@
 
     #define AbortIf_(test, ...) do { \
         if ((test)) { \
-            NSLog(@"%@", [NSString stringWithFormat:__VA_ARGS__]); \
+            fprintf(stderr, "ABORT: %s\n", [[NSString stringWithFormat:__VA_ARGS__] UTF8String]); \
             abort(); \
             }; \
         } while(0);
