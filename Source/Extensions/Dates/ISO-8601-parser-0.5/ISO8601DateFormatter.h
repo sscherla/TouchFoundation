@@ -43,13 +43,13 @@ extern unichar ISO8601DefaultTimeSeparatorCharacter;
 	BOOL parsesStrictly;
 }
 
-@property(retain) NSTimeZone *defaultTimeZone;
+@property(retain, nonatomic) NSTimeZone *defaultTimeZone;
 
 #pragma mark Parsing
 
 //As a formatter, this object converts strings to dates.
 
-@property BOOL parsesStrictly;
+@property (readwrite, nonatomic, assign) BOOL parsesStrictly;
 
 - (NSDateComponents *) dateComponentsFromString:(NSString *)string;
 - (NSDateComponents *) dateComponentsFromString:(NSString *)string timeZone:(out NSTimeZone **)outTimeZone;
