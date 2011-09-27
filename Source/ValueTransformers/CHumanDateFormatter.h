@@ -29,16 +29,22 @@
 
 #import <Foundation/Foundation.h>
 
+enum {
+    HumanDateFormatterFlags_MultiLine = 0x01,
+    HumanDateFormatterFlags_Relative = 0x02,    
+    HumanDateFormatterFlags_Mini = 0x04,
+    HumanDateFormatterFlags_IncludeTime = 0x08,
+    } EHumanDateFormatterFlags;
+
+
+
 @interface CHumanDateFormatter : NSDateFormatter {
-	BOOL singleLine;
-	BOOL relative;
 }
 
-@property (readwrite, nonatomic, assign) BOOL singleLine;
-@property (readwrite, nonatomic, assign) BOOL relative;
+@property (readwrite, nonatomic, assign) NSUInteger flags;
 
-+ (id)humanDateFormatter:(BOOL)inSingleLine;
++ (id)humanDateFormatter:(NSUInteger)inFlags;
 
-+ (NSString *)formatDate:(NSDate *)inDate singleLine:(BOOL)inSingleLine;
++ (NSString *)formatDate:(NSDate *)inDate flags:(NSUInteger)inFlags;
 
 @end
