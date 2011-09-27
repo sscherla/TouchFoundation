@@ -103,4 +103,17 @@ NSDateComponents *theComponents = [[NSCalendar currentCalendar] components:NSEra
 return(theComponents.era == 0 && theComponents.year == 0 && theComponents.month == 0 && theComponents.day == 0);
 }
 
+- (NSDate *)dateWithRelativeDay:(NSInteger)inDelta
+    {
+    NSDateComponents *theDeltaComponents = [[NSDateComponents alloc] init];
+    [theDeltaComponents setDay:inDelta];
+    NSDate *theDate = [[NSCalendar currentCalendar] dateByAddingComponents:theDeltaComponents toDate:self options:0];    
+    return(theDate);
+    }
+
+- (NSDate *)dateYesterday
+    {
+    return([self dateWithRelativeDay:-1]);
+    }
+
 @end

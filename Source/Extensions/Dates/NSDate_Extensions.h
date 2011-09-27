@@ -51,4 +51,7 @@
 
 - (BOOL)isSameCalendarDayAsDate:(NSDate *)inDate;
 
+- (NSDate *)dateWithRelativeDay:(NSInteger)inDelta;
+- (NSDate *)dateYesterday;
+
 @end
