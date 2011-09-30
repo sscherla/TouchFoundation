@@ -1,6 +1,6 @@
 //
-//  TouchCode
 //  CURLOperation.m
+//  TouchCode
 //
 //  Created by Jonathan Wight on 10/21/09.
 //  Copyright 2011 toxicsoftware.com. All rights reserved.
@@ -91,9 +91,9 @@
 //		[self.connection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 
         [self.connection setDelegateQueue:[NSOperationQueue currentQueue]];
-        
-        
-        
+
+
+
 		[self.connection start];
 
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate distantFuture]];
