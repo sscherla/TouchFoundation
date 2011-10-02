@@ -1,10 +1,33 @@
 //
-//  CHTTPClient.m
-//  TouchFoundation
+//	CHTTPClient.m
+//	TouchCode
 //
-//  Created by Jonathan Wight on 10/23/10.
-//  Copyright 2010 toxicsoftware.com. All rights reserved.
+//	Created by Jonathan Wight on 10/23/10.
+//	Copyright 2011 toxicsoftware.com. All rights reserved.
 //
+//	Redistribution and use in source and binary forms, with or without modification, are
+//	permitted provided that the following conditions are met:
+//
+//	   1. Redistributions of source code must retain the above copyright notice, this list of
+//		  conditions and the following disclaimer.
+//
+//	   2. Redistributions in binary form must reproduce the above copyright notice, this list
+//		  of conditions and the following disclaimer in the documentation and/or other materials
+//		  provided with the distribution.
+//
+//	THIS SOFTWARE IS PROVIDED BY TOXICSOFTWARE.COM ``AS IS'' AND ANY EXPRESS OR IMPLIED
+//	WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+//	FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL TOXICSOFTWARE.COM OR
+//	CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+//	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+//	SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+//	ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+//	NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+//	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+//	The views and conclusions contained in the software and documentation are those of the
+//	authors and should not be interpreted as representing official policies, either expressed
+//	or implied, of toxicsoftware.com.
 
 #import "CHTTPClient.h"
 
@@ -18,7 +41,7 @@
 @property (readwrite, nonatomic, retain) NSMutableData *buffer;
 @property (readwrite, nonatomic, retain) CTemporaryData *data;
 @property (readwrite, nonatomic, assign) CFHTTPMessageRef requestMessage;
-@property (readwrite, nonatomic, assign) CFHTTPMessageRef responseMessage;    
+@property (readwrite, nonatomic, assign) CFHTTPMessageRef responseMessage;
 
 - (void)open;
 - (void)process;
@@ -61,13 +84,13 @@
         CFRelease(readStream);
         readStream = NULL;
         }
-    
+
     if (requestMessage)
         {
         CFRelease(requestMessage);
         requestMessage = NULL;
         }
-    
+
     if (responseMessage)
         {
         CFRelease(responseMessage);
@@ -113,15 +136,15 @@
 
     CFIndex theBytesRead = CFReadStreamRead(self.readStream, self.initialBuffer.mutableBytes, self.initialBuffer.length);
     self.initialBuffer.length = theBytesRead;
-    
+
     self.responseMessage = (CFHTTPMessageRef)CFReadStreamCopyProperty(self.readStream, kCFStreamPropertyHTTPResponseHeader);
-    
+
     if ([self.delegate respondsToSelector:@selector(httpClient:didReceiveResponse:)])
         {
         CMyURLResponse *theResponse = [[CMyURLResponse alloc] initWithMessage:self.responseMessage];
         [self.delegate httpClient:self didReceiveResponse:theResponse];
         }
-    
+
     CFIndex theStatusCode = CFHTTPMessageGetResponseStatusCode(self.responseMessage);
     NSDictionary *theRequestHeaders = (__bridge_transfer id)CFHTTPMessageCopyAllHeaderFields(self.requestMessage);
 
@@ -133,7 +156,7 @@
             NSLog(@"Bad auth");
             return;
             }
-        
+
         CFHTTPAuthenticationRef theAuthentication = CFHTTPAuthenticationCreateFromResponse(kCFAllocatorDefault, self.responseMessage);
         if (theAuthentication == NULL)
             {
@@ -143,22 +166,22 @@
         CFStreamError theError;
         BOOL theFlag = CFHTTPAuthenticationIsValid(theAuthentication, &theError);
         NSLog(@"AUTH? %d", theFlag);
-        
+
 //        NSDictionary *theCredentials = [NSDictionary dictionaryWithObjectsAndKeys:
 //            @"schwa", (id)kCFHTTPAuthenticationUsername,
 //            @"*****", (id)kCFHTTPAuthenticationPassword,
 //            NULL];
-//        
+//
 //        theFlag = CFHTTPMessageApplyCredentialDictionary(self.requestMessage, theAuthentication, theCredentials, &theError);
 //        NSLog(@"CRED? %d", theFlag);
-//        
+//
 //        [self process];
 
         CFRelease(theAuthentication);
-        
+
         return;
         }
-    
+
 
     if ([self.request.HTTPMethod isEqualToString:@"HEAD"] || (theStatusCode >= 100 && theStatusCode <= 199) || theStatusCode == 204 || theStatusCode == 304)
         {
@@ -178,12 +201,12 @@
 - (void)close
     {
 	NSLog(@"CLOSE");
-	
+
     if (readStream)
         {
         CFReadStreamClose(readStream);
         }
-        
+
 	if (self.delegate && [self.delegate respondsToSelector:@selector(httpClientDidFinishLoading:)])
 		{
 		[self.delegate httpClientDidFinishLoading:self];
