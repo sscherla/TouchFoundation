@@ -1,9 +1,9 @@
 //
 //  CBlockValueTransformer.m
-//  knotes
+//  toxicsoftware.com
 //
 //  Created by Jonathan Wight on 8/10/11.
-//  Copyright (c) 2011 knotes. All rights reserved.
+//  Copyright (c) 2011 toxicsoftware.com. All rights reserved.
 //
 
 #import "CBlockValueTransformer.h"
