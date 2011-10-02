@@ -1,10 +1,33 @@
 //
 //  CPersistentCache.m
-//  PDFReader
+//  TouchCode
 //
 //  Created by Jonathan Wight on 06/02/11.
-//  Copyright 2011 toxicsoftware.com. All rights reserved.
+//	Copyright 2011 toxicsoftware.com. All rights reserved.
 //
+//	Redistribution and use in source and binary forms, with or without modification, are
+//	permitted provided that the following conditions are met:
+//
+//	   1. Redistributions of source code must retain the above copyright notice, this list of
+//	      conditions and the following disclaimer.
+//
+//	   2. Redistributions in binary form must reproduce the above copyright notice, this list
+//	      of conditions and the following disclaimer in the documentation and/or other materials
+//	      provided with the distribution.
+//
+//	THIS SOFTWARE IS PROVIDED BY TOXICSOFTWARE.COM ``AS IS'' AND ANY EXPRESS OR IMPLIED
+//	WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+//	FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL TOXICSOFTWARE.COM OR
+//	CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+//	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+//	SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+//	ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+//	NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+//	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+//	The views and conclusions contained in the software and documentation are those of the
+//	authors and should not be interpreted as representing official policies, either expressed
+//	or implied, of toxicsoftware.com.
 
 #import "CPersistentCache.h"
 
@@ -56,7 +79,7 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
             [sNamedPersistentCaches setObject:theCache forKey:inName];
             }
         });
-        
+
     return(theCache);
     }
 
@@ -70,7 +93,7 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
 		}
 	return(self);
 	}
-    
+
 - (NSURL *)URL
     {
     if (URL == NULL)
@@ -87,7 +110,7 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
         }
     return(URL);
     }
-    
+
 #pragma mark -
 
 - (NSString *)pathComponentForKey:(id)inKey
@@ -115,7 +138,7 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
         {
         return(YES);
         }
-    
+
     NSURL *theMetadataURL = [self URLForMetadataForKey:inKey];
     if ([[NSFileManager defaultManager] fileExistsAtPath:theMetadataURL.path] == YES)
         {
@@ -123,7 +146,7 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
         }
     return(NO);
     }
-    
+
 - (id)objectForKey:(id)inKey
     {
     id theObject = [self.objectCache objectForKey:inKey];
@@ -136,15 +159,15 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
             NSURL *theDataURL = [self.URL URLByAppendingPathComponent:[theMetadata objectForKey:@"href"]];
             theData = [NSData dataWithContentsOfURL:theDataURL options:NSDataReadingMapped error:NULL];
             }
-        
+
         if (theData)
             {
             NSString *theType = [theMetadata objectForKey:@"type"];
             CTypedData *theTypedData = [[CTypedData alloc] initWithType:theType data:theData metadata:theMetadata];
             theObject = [theTypedData transformedObject];
-            
+
             NSUInteger theCost = [theData length];
-            
+
             [self.objectCache setObject:theObject forKey:inKey cost:theCost];
             }
         }
@@ -153,20 +176,20 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
 //        {
 //        NSLog(@"CACHE MISS: %@", inKey);
 //        }
-        
+
     return(theObject);
     }
-    
+
 - (void)setObject:(id)inObject forKey:(id)inKey
     {
     [self setObject:inObject forKey:inKey cost:0];
     }
-    
+
 - (void)setObject:(id)inObject forKey:(id)inKey cost:(NSUInteger)inCost
     {
     CTypedData *theTypedData = [[CTypedData alloc] initByTransformingObject:inObject];
     NSParameterAssert(theTypedData != NULL);
-    
+
     if (inCost == 0)
         {
         inCost = [theTypedData.data length];
@@ -179,14 +202,14 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^(void) {
 
         NSError *theError = NULL;
-        
+
         NSURL *theDataURL = theURL;
         NSString *theFilenameExtension = (__bridge_transfer NSString *)UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)theTypedData.type, kUTTagClassFilenameExtension);
         if (theFilenameExtension)
             {
             theDataURL = [theDataURL URLByAppendingPathExtension:theFilenameExtension];
             }
-    
+
         NSParameterAssert(theTypedData.data != NULL);
         [theTypedData.data writeToURL:theDataURL options:0 error:&theError];
         // TODO:error checking.
@@ -198,14 +221,14 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
             [self.keyTransformer reverseTransformedValue:inKey], @"key",
 #if DEBUG == 1
             [inKey description], @"key_description",
-#endif            
+#endif
             NULL];
-        
+
         if (theTypedData.metadata != NULL)
             {
             [theMetadata addEntriesFromDictionary:theTypedData.metadata];
             }
-        
+
 
         NSData *theData = [NSPropertyListSerialization dataWithPropertyList:theMetadata format:NSPropertyListBinaryFormat_v1_0 options:0 error:&theError];
         // TODO:error checking.
@@ -261,7 +284,7 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
                 }
             }
         }
-    return(theObject);   
+    return(theObject);
     }
 
 - (CacheBlock)asyncCachedCalculation:(CacheBlock)inBlock forKey:(id)inKey;
