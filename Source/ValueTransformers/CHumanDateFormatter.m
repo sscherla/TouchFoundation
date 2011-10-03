@@ -95,7 +95,7 @@
         else if (theDelta >= 30 && theDelta < 360)
             {
             theUnit = NSMonthCalendarUnit;
-            theDeltaInUnits = theDelta / (365.254 / 12.0);
+            theDeltaInUnits = (NSInteger)((NSTimeInterval)theDelta / (365.254 / 12.0));
             }
         else
             {
