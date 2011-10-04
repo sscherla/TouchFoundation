@@ -35,6 +35,7 @@
 
 @implementation CTestNetworkManager
 
+@synthesize testEnabled;
 @synthesize successCount;
 @synthesize failureRate;
 
@@ -42,6 +43,7 @@
     {
     if ((self = [super init]) != NULL)
         {
+        testEnabled = YES;
         successCount = 3;
         failureRate = 1.0f;
         }
@@ -50,27 +52,29 @@
 
 - (void)sendRequest:(NSURLRequest *)request shouldBackground:(BOOL)inShouldBackground completionHandler:(void (^)(NSURLResponse*, NSData*, NSError*))handler;
     {
-    if (self.successCount > 0)
+    if (self.testEnabled == YES)
         {
-        self.successCount--;
-        }
-    else
-        {
-        if (self.failureRate > 0.0f && RND() <= self.failureRate)
+        if (self.successCount > 0)
             {
-            LogDebug_(@"Pretending to fail a request.");
-            if (handler)
+            self.successCount--;
+            }
+        else
+            {
+            if (self.failureRate > 0.0f && RND() <= self.failureRate)
                 {
-                NSDictionary *theUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                    @"We're pretending to fail here.", NSLocalizedDescriptionKey,
-                    NULL];
-                NSError *theError = [NSError errorWithDomain:@"TODO_DOMAIN" code:-1 userInfo:theUserInfo];
-                handler(NULL, NULL, theError);
+                LogDebug_(@"Pretending to fail a request.");
+                if (handler)
+                    {
+                    NSDictionary *theUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                        @"We're pretending to fail here.", NSLocalizedDescriptionKey,
+                        NULL];
+                    NSError *theError = [NSError errorWithDomain:@"TODO_DOMAIN" code:-1 userInfo:theUserInfo];
+                    handler(NULL, NULL, theError);
+                    }
                 return;
                 }
             }
         }
-
 
     [super sendRequest:request shouldBackground:inShouldBackground completionHandler:handler];
     }
