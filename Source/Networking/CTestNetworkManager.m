@@ -43,7 +43,7 @@
     {
     if ((self = [super init]) != NULL)
         {
-        testEnabled = YES;
+        testEnabled = NO;
         successCount = 3;
         failureRate = 1.0f;
         }
