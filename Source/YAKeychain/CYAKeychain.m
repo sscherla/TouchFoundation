@@ -47,23 +47,6 @@ NSString *const kYAKeychain_ErrorDomain = @"kYAKeychain_ErrorDomain";
 
 @synthesize accessGroup;
 
-+ (void)load
-    {
-    @autoreleasepool
-        {
-//        [[[self alloc] init] removeItemForAccount:@"schwa" service:@"knotes" error:NULL];
-//        NSLog(@"%@", [[[self alloc] init] dataForItemWithAccount:@"schwa" service:@"knotes" error:NULL]);
-//        [[[self alloc] init] setData:[@"Hello world" dataUsingEncoding:NSUTF8StringEncoding] forItemWithAccount:@"schwa" service:@"knotes" error:NULL];
-//        [[[self alloc] init] setData:[@"Hello world 2" dataUsingEncoding:NSUTF8StringEncoding] forItemWithAccount:@"schwa" service:@"knotes" error:NULL];
-//        NSLog(@"%@", [[[self alloc] init] dataForItemWithAccount:@"schwa" service:@"knotes" error:NULL]);
-
-        [[[self alloc] init] setData:[@"Woo" dataUsingEncoding:NSUTF8StringEncoding] forItemWithURL:[NSURL URLWithString:@"http://schwa@toxicsoftware.com"] error:NULL];
-        NSLog(@"%@", [[[self alloc] init] dataForItemWithURL:[NSURL URLWithString:@"http://schwa@toxicsoftware.com"] error:NULL]);
-        }
-    }
-
-#pragma mark -
-
 - (NSData *)dataForItemWithQuery:(NSDictionary *)inQueryDictionary error:(NSError **)outError
     {
     NSData *theData = NULL;
