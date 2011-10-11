@@ -51,3 +51,11 @@
 - (id)transformedObject;
 
 @end
+
+#pragma mark -
+
+@interface CTypedData (CTypedData_Convenience)
+
+- (id)initWithContentType:(NSString *)inContentType data:(NSData *)inData;
+
+@end
