@@ -32,6 +32,7 @@
 #import "CNetworkManager.h"
 
 #import "CTestNetworkManager.h"
+#import "CTypedData.h"
 
 @interface CNetworkManager ()
 @property (readwrite, nonatomic, retain) NSOperationQueue *operationQueue;
@@ -119,7 +120,10 @@ static CNetworkManager *gSharedInstance = NULL;
                     }
                 if (data != NULL)
                     {
-                    [theUserInfo setObject:data forKey:@"data"];
+                    NSString *theContentType = [[theHTTPResponse allHeaderFields] objectForKey:@"Content-Type"];
+
+                    CTypedData *theTypedData = [[CTypedData alloc] initWithContentType:theContentType data:data];
+                    [theUserInfo setObject:theTypedData forKey:@"typedData"];
                     }
                 [theUserInfo setObject:response forKey:@"response"];
 
