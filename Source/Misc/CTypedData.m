@@ -65,7 +65,20 @@
 
 - (NSString *)description
     {
-    return([NSString stringWithFormat:@"%@ (type: %@, data: %d bytes, metadata: %@)", [super description], self.type, self.data.length, self.metadata]);
+    if (UTTypeConformsTo((__bridge CFStringRef)self.type, kUTTypeText) == YES)
+        {
+        NSString *theDataString = [[NSString alloc] initWithData:self.data encoding:NSUTF8StringEncoding];
+        if (theDataString.length > 100)
+            {
+            theDataString = [NSString stringWithFormat:@"%@…", [theDataString substringToIndex:100]];
+            }
+        
+        return([NSString stringWithFormat:@"%@ (type: %@, data: %@ (%d bytes), metadata: %@)", [super description], self.type, theDataString, self.data.length, self.metadata]);
+        }
+    else
+        {
+        return([NSString stringWithFormat:@"%@ (type: %@, data: %d bytes, metadata: %@)", [super description], self.type, self.data.length, self.metadata]);
+        }
     }
 
 @end
@@ -110,12 +123,12 @@
         }
     else if ([inObject conformsToProtocol:@protocol(NSCoding)])
         {
-        #warning Use real UTI type
         theType = @"com.toxicsoftware.NSKeyedArchiver";
         theData = [NSKeyedArchiver archivedDataWithRootObject:inObject];
         }
     else
         {
+        Assert_(NO, @"Could not convert object.");
         self = NULL;
         return(NULL);
         }
@@ -148,10 +161,13 @@
         NSString *theString = [[NSString alloc] initWithData:self.data encoding:NSUTF8StringEncoding];
         theObject = [NSURL URLWithString:theString];
         }
-    else if ([self.type isEqualToString:@"com.toxicsoftware.NSKeyedArchiver"])
+    else if (UTTypeConformsTo((__bridge CFStringRef)self.type, CFSTR("com.toxicsoftware.NSKeyedArchiver")))
         {
-        #warning Should use a real UTI type & UTTypeConformsTo
         theObject = [NSKeyedUnarchiver unarchiveObjectWithData:self.data];
+        }
+    else
+        {
+        Assert_(NO, @"Could not convert object.");
         }
     return(theObject);
     }
