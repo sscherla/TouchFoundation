@@ -10,4 +10,14 @@
 
 @implementation CTypedData (JSONExtensions)
 
+- (NSDictionary *)asDictionary
+    {
+    NSMutableDictionary *theDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+        self.type, @"type",
+        self.data, @"data",
+        self.metadata, @"metadata",
+        NULL];
+    return(theDictionary);
+    }
+
 @end

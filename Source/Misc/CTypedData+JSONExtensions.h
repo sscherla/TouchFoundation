@@ -10,4 +10,6 @@
 
 @interface CTypedData (JSONExtensions)
 
+- (NSDictionary *)asDictionary;
+
 @end
