@@ -33,7 +33,7 @@
 
 @interface CValueWrapper : NSObject <NSCoding>
 
-@property (readonly, nonatomic, retain) NSValue *value;
+@property (readonly, nonatomic, strong) NSValue *value;
 
 - (id)initWithValue:(NSValue *)inValue;
 

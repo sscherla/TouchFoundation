@@ -33,9 +33,9 @@
 
 @interface CTypedData : NSObject
 
-@property (readonly, nonatomic, retain) NSString *type;
-@property (readonly, nonatomic, retain) NSData *data;
-@property (readonly, nonatomic, retain) NSDictionary *metadata;
+@property (readonly, nonatomic, strong) NSString *type;
+@property (readonly, nonatomic, strong) NSData *data;
+@property (readonly, nonatomic, strong) NSDictionary *metadata;
 
 - (id)initWithType:(NSString *)inType data:(NSData *)inData metadata:(NSDictionary *)inMetadata;
 - (id)initWithType:(NSString *)inType data:(NSData *)inData;

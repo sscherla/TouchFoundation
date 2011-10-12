@@ -40,9 +40,9 @@
 #define CACHE_VERSION 0
 
 @interface CPersistentCache ()
-@property (readwrite, nonatomic, retain) NSURL *URL;
-@property (readwrite, nonatomic, retain) NSValueTransformer *keyTransformer;
-@property (readwrite, nonatomic, retain) NSCache *objectCache;
+@property (readwrite, nonatomic, strong) NSURL *URL;
+@property (readwrite, nonatomic, strong) NSValueTransformer *keyTransformer;
+@property (readwrite, nonatomic, strong) NSCache *objectCache;
 
 - (NSDictionary *)metadataForKey:(id)inKey;
 - (NSString *)pathComponentForKey:(id)inKey;

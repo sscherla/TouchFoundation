@@ -33,7 +33,7 @@
 
 @interface CPersistentCache : NSObject
 
-@property (readonly, nonatomic, retain) NSString *name;
+@property (readonly, nonatomic, strong) NSString *name;
 
 + (CPersistentCache *)persistentCacheWithName:(NSString *)inName;
 

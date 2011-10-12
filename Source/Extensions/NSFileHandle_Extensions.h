@@ -35,6 +35,6 @@
 
 + (id)fileHandleWithTemporaryFile;
 
-@property (readonly, nonatomic, retain) NSURL *URL;
+@property (readonly, nonatomic, strong) NSURL *URL;
 
 @end

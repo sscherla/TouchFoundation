@@ -35,7 +35,7 @@ extern NSString *const kYAKeychain_ErrorDomain;
 
 @interface CYAKeychain : NSObject
 
-@property (readwrite, nonatomic, retain) NSString *accessGroup;
+@property (readwrite, nonatomic, strong) NSString *accessGroup;
 
 - (NSData *)dataForItemWithQuery:(NSDictionary *)inQueryDictionary error:(NSError **)outError;
 - (BOOL)setData:(NSData *)inData forItemWithQuery:(NSDictionary *)inQueryDictionary error:(NSError **)outError;

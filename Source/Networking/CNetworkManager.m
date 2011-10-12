@@ -35,7 +35,7 @@
 #import "CTypedData.h"
 
 @interface CNetworkManager ()
-@property (readwrite, nonatomic, retain) NSOperationQueue *operationQueue;
+@property (readwrite, nonatomic, strong) NSOperationQueue *operationQueue;
 @property (readwrite, nonatomic, assign) NSInteger connectionCount;
 @end
 
