@@ -142,19 +142,12 @@
 - (id)transformedObject
     {
     id theObject = NULL;
+    // This needs to be in order of most specific to least specific (fall back).
     if (UTTypeConformsTo((__bridge CFStringRef)self.type, kUTTypeImage))
         {
         CGFloat theScale = [self.metadata objectForKey:@"scale"] ? [[self.metadata objectForKey:@"scale"] floatValue] : 1.0;
         UIImageOrientation theOrientation = [self.metadata objectForKey:@"orientation"] ? [[self.metadata objectForKey:@"orientation"] intValue] : UIImageOrientationUp;
         theObject = [UIImage imageWithData:self.data scale:theScale orientation:theOrientation];
-        }
-    else if (UTTypeConformsTo((__bridge CFStringRef)self.type, kUTTypeData))
-        {
-        theObject = self.data;
-        }
-    else if (UTTypeConformsTo((__bridge CFStringRef)self.type, kUTTypeText))
-        {
-        theObject = [[NSString alloc] initWithData:self.data encoding:NSUTF8StringEncoding];
         }
     else if (UTTypeConformsTo((__bridge CFStringRef)self.type, kUTTypeURL))
         {
@@ -164,6 +157,14 @@
     else if (UTTypeConformsTo((__bridge CFStringRef)self.type, CFSTR("com.toxicsoftware.NSKeyedArchiver")))
         {
         theObject = [NSKeyedUnarchiver unarchiveObjectWithData:self.data];
+        }
+    else if (UTTypeConformsTo((__bridge CFStringRef)self.type, kUTTypeText))
+        {
+        theObject = [[NSString alloc] initWithData:self.data encoding:NSUTF8StringEncoding];
+        }
+    else if (UTTypeConformsTo((__bridge CFStringRef)self.type, kUTTypeData))
+        {
+        theObject = self.data;
         }
     else
         {
