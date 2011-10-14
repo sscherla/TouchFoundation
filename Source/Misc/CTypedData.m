@@ -162,26 +162,29 @@
         }
     #endif /* TARGET_OS_IPHONE */
 
-    if (UTTypeConformsTo((__bridge CFStringRef)self.type, kUTTypeURL))
+    if (theObject == NULL)
         {
-        NSString *theString = [[NSString alloc] initWithData:self.data encoding:NSUTF8StringEncoding];
-        theObject = [NSURL URLWithString:theString];
-        }
-    else if (UTTypeConformsTo((__bridge CFStringRef)self.type, CFSTR("com.toxicsoftware.NSKeyedArchiver")))
-        {
-        theObject = [NSKeyedUnarchiver unarchiveObjectWithData:self.data];
-        }
-    else if (UTTypeConformsTo((__bridge CFStringRef)self.type, kUTTypeText))
-        {
-        theObject = [[NSString alloc] initWithData:self.data encoding:NSUTF8StringEncoding];
-        }
-    else if (UTTypeConformsTo((__bridge CFStringRef)self.type, kUTTypeData))
-        {
-        theObject = self.data;
-        }
-    else
-        {
-        Assert_(NO, @"Could not convert object.");
+        if (UTTypeConformsTo((__bridge CFStringRef)self.type, kUTTypeURL))
+            {
+            NSString *theString = [[NSString alloc] initWithData:self.data encoding:NSUTF8StringEncoding];
+            theObject = [NSURL URLWithString:theString];
+            }
+        else if (UTTypeConformsTo((__bridge CFStringRef)self.type, CFSTR("com.toxicsoftware.NSKeyedArchiver")))
+            {
+            theObject = [NSKeyedUnarchiver unarchiveObjectWithData:self.data];
+            }
+        else if (UTTypeConformsTo((__bridge CFStringRef)self.type, kUTTypeText))
+            {
+            theObject = [[NSString alloc] initWithData:self.data encoding:NSUTF8StringEncoding];
+            }
+        else if (UTTypeConformsTo((__bridge CFStringRef)self.type, kUTTypeData))
+            {
+            theObject = self.data;
+            }
+        else
+            {
+            Assert_(NO, @"Could not convert object.");
+            }
         }
     return(theObject);
     }
