@@ -35,7 +35,7 @@
 
 @implementation CTestNetworkManager
 
-@synthesize testEnabled;
+@synthesize enabled;
 @synthesize successCount;
 @synthesize failureRate;
 
@@ -43,7 +43,7 @@
     {
     if ((self = [super init]) != NULL)
         {
-        testEnabled = NO;
+        enabled = NO;
         successCount = 3;
         failureRate = 1.0f;
         }
@@ -52,7 +52,7 @@
 
 - (void)sendRequest:(NSURLRequest *)request shouldBackground:(BOOL)inShouldBackground completionHandler:(void (^)(NSURLResponse*, NSData*, NSError*))handler;
     {
-    if (self.testEnabled == YES)
+    if (self.enabled == YES)
         {
         if (self.successCount > 0)
             {

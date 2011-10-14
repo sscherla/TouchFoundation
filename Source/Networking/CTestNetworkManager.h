@@ -33,7 +33,7 @@
 
 @interface CTestNetworkManager : CNetworkManager
 
-@property (readwrite, nonatomic, assign) BOOL testEnabled;
+@property (readwrite, nonatomic, assign) BOOL enabled;
 @property (readwrite, nonatomic, assign) NSUInteger successCount;
 @property (readwrite, nonatomic, assign) float failureRate;
 
