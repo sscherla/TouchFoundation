@@ -49,11 +49,8 @@ static CNetworkManager *gSharedInstance = NULL;
 
 + (CNetworkManager *)sharedInstance
     {
-    #warning TODO make a user default pref
     static dispatch_once_t sOnceToken = 0;
     dispatch_once(&sOnceToken, ^{
-
-        #warning TODO make a user default pref
         #if DEBUG == 1
         gSharedInstance = [[CTestNetworkManager alloc] init];
         #else
