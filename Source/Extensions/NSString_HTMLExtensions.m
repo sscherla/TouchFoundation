@@ -1,5 +1,5 @@
 //
-//  NSString_Extensions.h
+//  NSString_Extensions.m
 //  TouchCode
 //
 //  Created by Jonathan Wight on 07/01/08.
@@ -29,17 +29,61 @@
 //  authors and should not be interpreted as representing official policies, either expressed
 //  or implied, of toxicsoftware.com.
 
-#import <Foundation/Foundation.h>
+#import "NSString_HTMLExtensions.h"
 
-@interface NSString (NSString_Extensions)
+#import "NSScanner_HTMLExtensions.h"
 
-- (NSArray *)componentsSeperatedByWhitespaceRunsOrComma;
-- (NSArray *)componentsSeparatedByRunsFromCharacterSet:(NSCharacterSet *)characterSet;
+@implementation NSString (NSString_HTMLExtensions)
 
-- (long)asLongFromHex;
+- (NSString *)stringByTidyingHTMLEntities
+    {
+    NSMutableString *theOutput = [NSMutableString string];
 
-- (NSString *)stringByAddingPercentEscapesWithCharactersToLeaveUnescaped:(NSString *)inCharactersToLeaveUnescaped legalURLCharactersToBeEscaped:(NSString *)inLegalURLCharactersToBeEscaped;
+    NSScanner *theScanner = [NSScanner scannerWithString:self];
+    [theScanner setCharactersToBeSkipped:NULL];
 
-- (NSString *)stringByObsessivelyAddingPercentEscapes;
+    while ([theScanner isAtEnd] == NO)
+        {
+        NSString *theString = NULL;
+        if ([theScanner scanUpToString:@"&" intoString:&theString] == YES)
+            {
+            [theOutput appendString:theString];
+            }
+        if ([theScanner scanHTMLEntityIntoString:&theString] == YES)
+            {
+            [theOutput appendString:theString];
+            }
+        else
+            {
+            if ([theScanner scanString:@"&" intoString:&theString] == YES)
+                {
+                [theOutput appendString:theString];
+                }
+            }
+        }
+
+    return([theOutput copy]);
+    }
+
+- (NSString *)stringByFlatteningHTML
+{
+    NSMutableArray *components = [NSMutableArray array];
+    NSScanner *scanner = [NSScanner scannerWithString:self];
+    
+    while (![scanner isAtEnd])
+    {
+        NSString *thisComponent = @"";
+        
+        [scanner scanUpToString:@"<" intoString:&thisComponent];
+        [scanner scanUpToString:@">" intoString:nil];
+        [scanner scanString:@">" intoString:nil];
+        
+        if (thisComponent.length > 0)
+            [components addObject:thisComponent];
+    }
+    
+    NSString *flattenedString = [components componentsJoinedByString:@" "];
+    return flattenedString;
+}
 
 @end

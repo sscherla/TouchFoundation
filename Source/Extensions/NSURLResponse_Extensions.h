@@ -33,8 +33,6 @@
 
 @interface NSURLResponse (NSURLResponse_Extensions)
 
-- (NSError *)asError;
-
 - (NSString *)debuggingDescription;
 
 - (void)dump;

@@ -34,8 +34,8 @@
 #import "CHTTPClient.h"
 
 @interface CURLOperation2 () <CHTTPClientDelegate>
-@property (readwrite, retain) NSURLResponse *response;
-@property (readwrite, retain) NSError *error;
+@property (readwrite, strong) NSURLResponse *response;
+@property (readwrite, strong) NSError *error;
 @end
 
 #pragma mark -

@@ -31,16 +31,10 @@
 
 #import "CCoreDataManager.h"
 
-#if TARGET_OS_IPHONE == 1
-#import <UIKit/UIKit.h>
-#else
-#import <Cocoa/Cocoa.h>
-#endif
-
 #define THREAD_PARANOIA 1
 
 @interface CCoreDataManager ()
-@property (readonly, retain) id threadStorageKey;
+@property (readonly, strong) id threadStorageKey;
 
 - (NSPersistentStoreCoordinator *)newPersistentStoreCoordinatorWithOptions:(NSDictionary *)inOptions error:(NSError **)outError;
 
@@ -48,8 +42,6 @@
 + (NSURL *)persistentStoreURLForName:(NSString *)inName storeType:(NSString *)inStoreType forceReplace:(BOOL)inForceReplace;
 + (NSString *)applicationSupportFolder;
 - (id)threadStorageKey;
-
-- (void)applicationWillTerminate:(NSNotification *)inNotification;
 @end
 
 #pragma mark -
@@ -83,12 +75,6 @@ NSAutoreleasePool *thePool = [[NSAutoreleasePool alloc] init];
 {
 if ((self = [super init]) != NULL)
 	{
-	#if TARGET_OS_IPHONE == 1
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillTerminate:) name:UIApplicationWillTerminateNotification object:[UIApplication sharedApplication]];
-	#else
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillTerminate:) name:NSApplicationWillTerminateNotification object:[NSApplication sharedApplication]];
-	#endif
-
 	storeType = NSSQLiteStoreType;
 	}
 return(self);
@@ -96,12 +82,6 @@ return(self);
 
 - (void)dealloc
 {
-#if TARGET_OS_IPHONE == 1
-[[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillTerminateNotification object:[UIApplication sharedApplication]];
-#else
-[[NSNotificationCenter defaultCenter] removeObserver:self name:NSApplicationWillTerminateNotification object:[NSApplication sharedApplication]];
-#endif
-
 [self save];
 }
 
@@ -251,10 +231,6 @@ BOOL theResult = NO;
 
 [self.managedObjectContext lock];
 
-#if TARGET_OS_IPHONE == 0
-[self.managedObjectContext commitEditing];
-#endif
-
 if ([self.managedObjectContext hasChanges] == NO)
 	theResult = YES;
 else
@@ -285,21 +261,6 @@ if (self.delegate && [self.delegate respondsToSelector:@selector(coreDataManager
 	{
 	[self.delegate coreDataManager:self presentError:inError];
 	}
-else
-	{
-	#if TARGET_OS_IPHONE == 1
-	fprintf(stderr, "ERROR: %s (%s)\n", [[inError description] UTF8String], [[inError.userInfo description] UTF8String]);
-	#else
-	[[NSApplication sharedApplication] presentError:inError];
-	#endif
-	}
-}
-
-- (void)applicationWillTerminate:(NSNotification *)inNotification
-{
-#pragma unused (inNotification)
-
-[self save];
 }
 
 #pragma mark -

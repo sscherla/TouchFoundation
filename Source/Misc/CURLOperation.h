@@ -36,13 +36,13 @@
 @interface CURLOperation : NSOperation {
 }
 
-@property (readonly, retain) NSURLRequest *request;
-@property (readonly, retain) NSURLConnection *connection;
-@property (readonly, retain) NSURLResponse *response;
-@property (readonly, retain) NSError *error;
-@property (readonly, retain) NSData *data;
+@property (readonly, strong) NSURLRequest *request;
+@property (readonly, strong) NSURLConnection *connection;
+@property (readonly, strong) NSURLResponse *response;
+@property (readonly, strong) NSError *error;
+@property (readonly, strong) NSData *data;
 @property (readwrite, copy) NSURLCredential *defaultCredential;
-@property (readwrite, retain) id userInfo;
+@property (readwrite, strong) id userInfo;
 
 /// Designated initializer
 - (id)initWithRequest:(NSURLRequest *)inRequest;

@@ -35,7 +35,7 @@
 	NSString *template;
 }
 
-@property (readwrite, nonatomic, retain) NSString *template;
+@property (readwrite, nonatomic, strong) NSString *template;
 
 - (id)initWithTemplate:(NSString *)inTemplate; // Designated init.
 - (id)initWithPath:(NSString *)inPath;

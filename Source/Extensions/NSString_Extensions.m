@@ -31,39 +31,7 @@
 
 #import "NSString_Extensions.h"
 
-#import "NSScanner_HTMLExtensions.h"
-
 @implementation NSString (NSString_Extensions)
-
-- (NSString *)stringByTidyingHTMLEntities
-{
-NSMutableString *theOutput = [NSMutableString string];
-
-NSScanner *theScanner = [NSScanner scannerWithString:self];
-[theScanner setCharactersToBeSkipped:NULL];
-
-while ([theScanner isAtEnd] == NO)
-	{
-	NSString *theString = NULL;
-	if ([theScanner scanUpToString:@"&" intoString:&theString] == YES)
-		{
-		[theOutput appendString:theString];
-		}
-	if ([theScanner scanHTMLEntityIntoString:&theString] == YES)
-		{
-		[theOutput appendString:theString];
-		}
-	else
-		{
-		if ([theScanner scanString:@"&" intoString:&theString] == YES)
-			{
-			[theOutput appendString:theString];
-			}
-		}
-	}
-
-return([theOutput copy]);
-}
 
 - (NSArray *)componentsSeperatedByWhitespaceRunsOrComma
 {
@@ -110,27 +78,6 @@ return(theEscapedString);
 - (NSString *)stringByObsessivelyAddingPercentEscapes
 {
 return([self stringByAddingPercentEscapesWithCharactersToLeaveUnescaped:@"abcdefghijklmnopqrstuvwyxzABCDEFGHIJKLMNOPQRSTUVWXYZ123456780" legalURLCharactersToBeEscaped:@"/=&?"]);
-}
-
-- (NSString *)stringByFlatteningHTML
-{
-    NSMutableArray *components = [NSMutableArray array];
-    NSScanner *scanner = [NSScanner scannerWithString:self];
-    
-    while (![scanner isAtEnd])
-    {
-        NSString *thisComponent = @"";
-        
-        [scanner scanUpToString:@"<" intoString:&thisComponent];
-        [scanner scanUpToString:@">" intoString:nil];
-        [scanner scanString:@">" intoString:nil];
-        
-        if (thisComponent.length > 0)
-            [components addObject:thisComponent];
-    }
-    
-    NSString *flattenedString = [components componentsJoinedByString:@" "];
-    return flattenedString;
 }
 
 @end

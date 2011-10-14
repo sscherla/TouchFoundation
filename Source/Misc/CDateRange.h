@@ -32,12 +32,10 @@
 #import <Foundation/Foundation.h>
 
 @interface CDateRange : NSObject <NSCopying, NSMutableCopying> {
-	NSDate *start;
-	NSDate *end;
 }
 
-@property (readonly, nonatomic, retain) NSDate *start;
-@property (readonly, nonatomic, retain) NSDate *end;
+@property (readonly, nonatomic, strong) NSDate *start;
+@property (readonly, nonatomic, strong) NSDate *end;
 @property (readonly, nonatomic, assign) NSTimeInterval duration;
 
 - (id)initWithStart:(NSDate *)inStart end:(NSDate *)inEnd; 
@@ -52,8 +50,8 @@
 	BOOL durationPinnedFlag;
 }
 
-@property (readwrite, nonatomic, retain) NSDate *start;
-@property (readwrite, nonatomic, retain) NSDate *end;
+@property (readwrite, nonatomic, strong) NSDate *start;
+@property (readwrite, nonatomic, strong) NSDate *end;
 @property (readwrite, nonatomic, assign) NSTimeInterval duration;
 @property (readwrite, nonatomic, assign) BOOL durationPinnedFlag;
 

@@ -36,6 +36,6 @@
 	id defaultMergePolicy;
 }
 
-@property (readwrite, retain) id defaultMergePolicy;
+@property (readwrite, strong) id defaultMergePolicy;
 
 @end

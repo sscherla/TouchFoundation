@@ -33,12 +33,6 @@
 
 @implementation NSURLResponse (NSURLResponse_Extensions)
 
-- (NSError *)asError
-{
-// TODO - we can make a minimal OH NOES error here and just use the URL in the error. No?
-return(NULL);
-}
-
 - (NSString *)debuggingDescription
 {
 NSMutableArray *theComponents = [NSMutableArray array];

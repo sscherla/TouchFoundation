@@ -36,8 +36,6 @@
 
 /**
  * @category NSScanner (NSScanner_MoreExtensions)
- * @abstract TODO
- * @discussion TODO
  */
 @interface NSScanner (NSScanner_MoreExtensions)
 

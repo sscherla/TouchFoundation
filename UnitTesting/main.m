@@ -1,8 +1,8 @@
 //
-//  NSOperation_DebugExtensions.h
+//  UnitTesting.m
 //  TouchCode
 //
-//  Created by Jonathan Wight on 7/29/09.
+//  Created by Jonathan Wight on 20090528.
 //  Copyright 2011 toxicsoftware.com. All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -31,9 +31,17 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSOperation (NSOperation_DebugExtensions)
+#import "CTemporaryFile.h"
 
-- (void)dump;
-- (void)dump:(NSUInteger)inLevel;
-
-@end
+int main (int argc, const char * argv[])
+    {
+    @autoreleasepool
+        {
+//        CTemporaryFile *theTempFile = [[CTemporaryFile alloc] init];
+//        theTempFile.deleteOnDealloc = NO;
+//        [theTempFile.fileHandle writeData:[@"Hello world" dataUsingEncoding:NSUTF8StringEncoding]];
+//        
+//        NSLog(@"%@", theTempFile);
+        }
+    return 0;
+    }

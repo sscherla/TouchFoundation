@@ -31,7 +31,9 @@
 
 #import "CPersistentCache.h"
 
+#if TARGET_OS_IPHONE
 #import <MobileCoreServices/MobileCoreServices.h>
+#endif /* TARGET_OS_IPHONE */
 
 #import "NSData_Extensions.h"
 #import "NSData_DigestExtensions.h"

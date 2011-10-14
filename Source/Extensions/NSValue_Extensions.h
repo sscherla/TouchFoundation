@@ -33,6 +33,7 @@
 
 @interface NSValue (NSValue_Extensions)
 
+#if TARGET_OS_IPHONE == 0
 + (NSValue *)valueWithCGPoint:(CGPoint)inPoint;
 - (CGPoint)CGPointValue;
 
@@ -41,5 +42,6 @@
 
 + (NSValue *)valueWithCGRect:(CGRect)inRect;
 - (CGRect)CGRectValue;
+#endif /* TARGET_OS_IPHONE == 0 */
 
 @end

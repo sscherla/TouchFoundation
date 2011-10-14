@@ -34,8 +34,10 @@
 #include <unistd.h>
 
 @interface CTemporaryFile ()
-@property (readwrite, nonatomic, retain) NSURL *URL;
+@property (readwrite, nonatomic, strong) NSURL *URL;
 @property (readwrite, nonatomic, assign) int fileDescriptor;
+
++ (NSString *)temporaryDirectory;
 @end
 
 #pragma mark -
@@ -45,29 +47,25 @@
 @synthesize deleteOnDealloc;
 @synthesize prefix;
 @synthesize suffix;
+@synthesize fileHandle;
+
 @synthesize URL;
 @synthesize fileDescriptor;
-@synthesize fileHandle;
 
 + (NSString *)temporaryDirectory
     {
     return(NSTemporaryDirectory());
     }
 
-+ (CTemporaryFile *)tempFile
-    {
-    return([[self alloc] init]);
-    }
-
 - (id)init
-{
-if ((self = [super init]) != NULL)
-	{
-	deleteOnDealloc = YES;
-	fileDescriptor = -1;
-	}
-return(self);
-}
+    {
+    if ((self = [super init]) != NULL)
+        {
+        deleteOnDealloc = YES;
+        fileDescriptor = -1;
+        }
+    return(self);
+    }
 
 - (void)dealloc
     {
@@ -78,6 +76,11 @@ return(self);
         // Try and delete the file. But dont stress if it fails. JIWTODO - maybe log this?
         [[NSFileManager defaultManager] removeItemAtURL:self.URL error:NULL];
         }
+    }
+
+- (NSString *)description
+    {
+    return([NSString stringWithFormat:@"%@ (fd: %d, URL: %@)", [super description], self.fileDescriptor, self.URL]);
     }
 
 #pragma mark -
@@ -116,7 +119,9 @@ return(self);
     // JIWTODO use a better (user supplied?) template
     NSString *theTemplate = [[[self class] temporaryDirectory] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@%@", self.prefix ?: @"", @"XXXXXXXXXXXXXXXXXXXXXXXXXXX"]];
     if (self.suffix)
+        {
         theTemplate = [theTemplate stringByAppendingString:self.suffix];
+        }
 
     char theBuffer[theTemplate.length + 1];
     strncpy(theBuffer, [theTemplate UTF8String], theTemplate.length + 1);
@@ -127,7 +132,7 @@ return(self);
 
 - (void)close
 	{
-	if (fileHandle > 0)
+	if (fileHandle != NULL)
 		{
         [fileHandle synchronizeFile];
         [fileHandle closeFile];

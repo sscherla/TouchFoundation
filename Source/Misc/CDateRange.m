@@ -34,8 +34,8 @@
 #import "NSDate_Extensions.h"
 
 @interface CDateRange ()
-@property (readwrite, nonatomic, retain) NSDate *start;
-@property (readwrite, nonatomic, retain) NSDate *end;
+@property (readwrite, nonatomic, strong) NSDate *start;
+@property (readwrite, nonatomic, strong) NSDate *end;
 @end
 
 #pragma mark -
@@ -113,14 +113,9 @@ if ((self = [super initWithStart:inStart end:inEnd]) != NULL)
 return(self);
 }
 
-- (NSDate *)start
-{
-return(start);
-}
-
 - (void)setStart:(NSDate *)inStart
 {
-if (start != inStart)
+if (self.start != inStart)
 	{
 	if (self.durationPinnedFlag == NO)
 		[super setStart:inStart];
@@ -130,20 +125,6 @@ if (start != inStart)
 		[super setStart:inStart];
 		[super setEnd:[inStart dateByAddingTimeInterval:theDuration]];
 		}
-
-    }
-}
-
-- (NSDate *)end
-{
-return end;
-}
-
-- (void)setEnd:(NSDate *)inEnd
-{
-if (end != inEnd)
-	{
-	[super setEnd:inEnd];
     }
 }
 

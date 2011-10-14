@@ -32,24 +32,17 @@
 #import <Foundation/Foundation.h>
 
 @interface CTemporaryFile : NSObject {
-	BOOL deleteOnDealloc;
-	NSString *prefix;
-	NSString *suffix;
-	NSURL *URL;
-	int fileDescriptor;
-	NSFileHandle *fileHandle;
 }
 
 @property (readwrite, nonatomic, assign) BOOL deleteOnDealloc;
-@property (readwrite, nonatomic, retain) NSString *prefix;
-@property (readwrite, nonatomic, retain) NSString *suffix;
-@property (readonly, nonatomic, retain) NSURL *URL;
+@property (readwrite, nonatomic, strong) NSString *prefix;
+@property (readwrite, nonatomic, strong) NSString *suffix;
+
+@property (readonly, nonatomic, strong) NSURL *URL;
 @property (readonly, nonatomic, assign) int fileDescriptor;
-@property (readonly, nonatomic, retain) NSFileHandle *fileHandle; // JIWTODO - THIS SHOULD NOT BE HERE. Strong binding bad.
+@property (readonly, nonatomic, strong) NSFileHandle *fileHandle;
 
 + (NSString *)temporaryDirectory;
-
-+ (CTemporaryFile *)tempFile;
 
 - (void)create;
 - (void)close;

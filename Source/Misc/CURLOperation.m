@@ -36,11 +36,11 @@
 @interface CURLOperation ()
 @property (readwrite, assign) BOOL isExecuting;
 @property (readwrite, assign) BOOL isFinished;
-@property (readwrite, retain) NSURLRequest *request;
-@property (readwrite, retain) NSURLConnection *connection;
-@property (readwrite, retain) NSURLResponse *response;
-@property (readwrite, retain) NSError *error;
-@property (readwrite, retain) CTemporaryData *temporaryData;
+@property (readwrite, strong) NSURLRequest *request;
+@property (readwrite, strong) NSURLConnection *connection;
+@property (readwrite, strong) NSURLResponse *response;
+@property (readwrite, strong) NSError *error;
+@property (readwrite, strong) CTemporaryData *temporaryData;
 @end
 
 @implementation CURLOperation

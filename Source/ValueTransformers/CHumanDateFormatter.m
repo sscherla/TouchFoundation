@@ -35,8 +35,6 @@
 
 @synthesize flags;
 
-// TODO one way to speed this up is to pre-init all the subDateFormatter objects (as statics).
-
 + (id)humanDateFormatter:(NSUInteger)inFlags;
     {
     CHumanDateFormatter *theFormatter = [[self alloc] init];

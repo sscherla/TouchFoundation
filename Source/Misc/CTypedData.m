@@ -31,9 +31,12 @@
 
 #import "CTypedData.h"
 
-#import <MobileCoreServices/MobileCoreServices.h>
+#import "Asserts.h"
 
+#if TARGET_OS_IPHONE
+#import <MobileCoreServices/MobileCoreServices.h>
 #import "UIImage_Extensions.h"
+#endif /* TARGET_OS_IPHONE */
 
 @implementation CTypedData
 
@@ -95,6 +98,7 @@
     NSData *theData = NULL;
     NSDictionary *theMetadata = NULL;
 
+    #if TARGET_OS_IPHONE
     if ([inObject isKindOfClass:[UIImage class]])
         {
         UIImage *theImage = (UIImage *)inObject;
@@ -106,31 +110,36 @@
             [NSNumber numberWithInt:theImage.imageOrientation], @"orientation",
             NULL];
         }
-    else if ([inObject isKindOfClass:[NSData class]])
+    #endif /* TARGET_OS_IPHONE */
+
+    if (theData == NULL)
         {
-        theType = (__bridge NSString *)kUTTypeData;
-        theData = inObject;
-        }
-    else if ([inObject isKindOfClass:[NSString class]])
-        {
-        theType = (__bridge NSString *)kUTTypeText;
-        theData = [inObject dataUsingEncoding:NSUTF8StringEncoding];
-        }
-    else if ([inObject isKindOfClass:[NSURL class]])
-        {
-        theType = (__bridge NSString *)kUTTypeURL;
-        theData = [[inObject absoluteString] dataUsingEncoding:NSUTF8StringEncoding];
-        }
-    else if ([inObject conformsToProtocol:@protocol(NSCoding)])
-        {
-        theType = @"com.toxicsoftware.NSKeyedArchiver";
-        theData = [NSKeyedArchiver archivedDataWithRootObject:inObject];
-        }
-    else
-        {
-        Assert_(NO, @"Could not convert object.");
-        self = NULL;
-        return(NULL);
+        if ([inObject isKindOfClass:[NSData class]])
+            {
+            theType = (__bridge NSString *)kUTTypeData;
+            theData = inObject;
+            }
+        else if ([inObject isKindOfClass:[NSString class]])
+            {
+            theType = (__bridge NSString *)kUTTypeText;
+            theData = [inObject dataUsingEncoding:NSUTF8StringEncoding];
+            }
+        else if ([inObject isKindOfClass:[NSURL class]])
+            {
+            theType = (__bridge NSString *)kUTTypeURL;
+            theData = [[inObject absoluteString] dataUsingEncoding:NSUTF8StringEncoding];
+            }
+        else if ([inObject conformsToProtocol:@protocol(NSCoding)])
+            {
+            theType = @"com.toxicsoftware.NSKeyedArchiver";
+            theData = [NSKeyedArchiver archivedDataWithRootObject:inObject];
+            }
+        else
+            {
+            NSAssert(NO, @"Could not convert object.");
+            self = NULL;
+            return(NULL);
+            }
         }
 
     if ((self = [self initWithType:theType data:theData metadata:theMetadata]) != NULL)
@@ -143,13 +152,17 @@
     {
     id theObject = NULL;
     // This needs to be in order of most specific to least specific (fall back).
+
+    #if TARGET_OS_IPHONE == 1
     if (UTTypeConformsTo((__bridge CFStringRef)self.type, kUTTypeImage))
         {
         CGFloat theScale = [self.metadata objectForKey:@"scale"] ? [[self.metadata objectForKey:@"scale"] floatValue] : 1.0;
         UIImageOrientation theOrientation = [self.metadata objectForKey:@"orientation"] ? [[self.metadata objectForKey:@"orientation"] intValue] : UIImageOrientationUp;
         theObject = [UIImage imageWithData:self.data scale:theScale orientation:theOrientation];
         }
-    else if (UTTypeConformsTo((__bridge CFStringRef)self.type, kUTTypeURL))
+    #endif /* TARGET_OS_IPHONE */
+
+    if (UTTypeConformsTo((__bridge CFStringRef)self.type, kUTTypeURL))
         {
         NSString *theString = [[NSString alloc] initWithData:self.data encoding:NSUTF8StringEncoding];
         theObject = [NSURL URLWithString:theString];

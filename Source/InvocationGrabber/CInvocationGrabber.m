@@ -38,7 +38,7 @@ NSInvocation *theInvocation = [theInvocationGrabber invocation];
 */
 
 @interface CInvocationGrabber ()
-@property (readwrite, retain) id target;
+@property (readwrite, strong) id target;
 @property (readwrite, assign) NSInvocation * __autoreleasing *invocationDestination;
 @end
 

@@ -31,6 +31,7 @@
 
 #import "CNetworkManager.h"
 
+#import "Asserts.h"
 #import "CTestNetworkManager.h"
 #import "CTypedData.h"
 
@@ -73,6 +74,7 @@ static CNetworkManager *gSharedInstance = NULL;
 
 - (void)setConnectionCount:(NSInteger)inConnectionCount
     {
+    #if TARGET_OS_IPHONE == 1
     if (connectionCount == 0 && inConnectionCount == 1)
         {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
@@ -81,6 +83,8 @@ static CNetworkManager *gSharedInstance = NULL;
         {
         [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
         }
+    #endif /* TARGET_OS_IPHONE == 1 */
+
     connectionCount = inConnectionCount;
     }
 
@@ -93,11 +97,13 @@ static CNetworkManager *gSharedInstance = NULL;
     {
     self.connectionCount += 1;
 
+    #if TARGET_OS_IPHONE == 1
     UIBackgroundTaskIdentifier theBackgroundTaskIdentifier = UIBackgroundTaskInvalid;
     if (inShouldBackground)
         {
         theBackgroundTaskIdentifier = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:NULL];
         }
+    #endif /* TARGET_OS_IPHONE == 1 */
 
     [NSURLConnection sendAsynchronousRequest:request queue:self.operationQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
 
@@ -143,10 +149,12 @@ static CNetworkManager *gSharedInstance = NULL;
 
         self.connectionCount -= 1;
 
+        #if TARGET_OS_IPHONE == 1
         if (inShouldBackground)
             {
             [[UIApplication sharedApplication] endBackgroundTask:theBackgroundTaskIdentifier];
             }
+        #endif /* TARGET_OS_IPHONE == 1 */
 
 
 //        double delayInSeconds = 30.0;

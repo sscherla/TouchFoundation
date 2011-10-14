@@ -37,9 +37,9 @@
 
 @interface CTemporaryData ()
 @property (readwrite, nonatomic, assign) size_t memoryLimit;
-@property (readwrite, nonatomic, retain) id storage;
+@property (readwrite, nonatomic, strong) id storage;
 
-@property (readonly, nonatomic, retain) NSMutableData *dataStorage;
+@property (readonly, nonatomic, strong) NSMutableData *dataStorage;
 
 - (BOOL)convertDataToFile:(NSError **)outError;
 @end

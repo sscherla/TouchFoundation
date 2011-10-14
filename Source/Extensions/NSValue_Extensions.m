@@ -34,40 +34,42 @@
 
 @implementation NSValue (NSValue_Extensions)
 
+#if TARGET_OS_IPHONE == 0
 + (NSValue *)valueWithCGPoint:(CGPoint)inPoint
-{
-return([NSValue valueWithBytes:&inPoint objCType:@encode(CGPoint)]);
-}
+    {
+    return([NSValue valueWithBytes:&inPoint objCType:@encode(CGPoint)]);
+    }
 
 - (CGPoint)CGPointValue
-{
-CGPoint theValue;
-[self getValue:&theValue];
-return(theValue);
-}
+    {
+    CGPoint theValue;
+    [self getValue:&theValue];
+    return(theValue);
+    }
 
 + (NSValue *)valueWithCGSize:(CGSize)inSize
-{
-return([NSValue valueWithBytes:&inSize objCType:@encode(CGSize)]);
-}
+    {
+    return([NSValue valueWithBytes:&inSize objCType:@encode(CGSize)]);
+    }
 
 - (CGSize)CGSizeValue
-{
-CGSize theValue;
-[self getValue:&theValue];
-return(theValue);
-}
+    {
+    CGSize theValue;
+    [self getValue:&theValue];
+    return(theValue);
+    }
 
 + (NSValue *)valueWithCGRect:(CGRect)inRect
-{
-return([NSValue valueWithBytes:&inRect objCType:@encode(CGRect)]);
-}
+    {
+    return([NSValue valueWithBytes:&inRect objCType:@encode(CGRect)]);
+    }
 
 - (CGRect)CGRectValue
-{
-CGRect theValue;
-[self getValue:&theValue];
-return(theValue);
-}
+    {
+    CGRect theValue;
+    [self getValue:&theValue];
+    return(theValue);
+    }
+#endif /* TARGET_OS_IPHONE == 0 */
 
 @end

@@ -53,10 +53,12 @@ NSString *const kYAKeychain_ErrorDomain = @"kYAKeychain_ErrorDomain";
     
     NSMutableDictionary *theQueryDictionary = [inQueryDictionary mutableCopy];
     [theQueryDictionary setObject:[NSNumber numberWithBool:YES] forKey:(__bridge id)kSecReturnData];
+    #if TARGET_OS_IPHONE == 1
     if (self.accessGroup.length > 0)
         {
         [theQueryDictionary setObject:self.accessGroup forKey:(__bridge id)kSecAttrAccessGroup];
         }
+    #endif /* TARGET_OS_IPHONE == 1 */
     
     CFTypeRef theResult = NULL;
     OSStatus theStatus = SecItemCopyMatching((__bridge CFDictionaryRef)theQueryDictionary, &theResult);
@@ -79,10 +81,12 @@ NSString *const kYAKeychain_ErrorDomain = @"kYAKeychain_ErrorDomain";
     {
     NSMutableDictionary *theQueryDictionary = [inQueryDictionary mutableCopy];
     [theQueryDictionary setObject:[NSNumber numberWithBool:YES] forKey:(__bridge id)kSecReturnData];
+    #if TARGET_OS_IPHONE == 1
     if (self.accessGroup.length > 0)
         {
         [theQueryDictionary setObject:self.accessGroup forKey:(__bridge id)kSecAttrAccessGroup];
         }
+    #endif /* TARGET_OS_IPHONE == 1 */
     
     CFTypeRef theResult = NULL;
     OSStatus theStatus = SecItemCopyMatching((__bridge CFDictionaryRef)theQueryDictionary, &theResult);
@@ -137,10 +141,12 @@ NSString *const kYAKeychain_ErrorDomain = @"kYAKeychain_ErrorDomain";
 - (BOOL)removeItemForQuery:(NSDictionary *)inQueryDictionary error:(NSError **)outError
     {
     NSMutableDictionary *theQueryDictionary = [inQueryDictionary mutableCopy];
+    #if TARGET_OS_IPHONE == 1
     if (self.accessGroup.length > 0)
         {
         [theQueryDictionary setObject:self.accessGroup forKey:(__bridge id)kSecAttrAccessGroup];
         }
+    #endif /* TARGET_OS_IPHONE == 1 */
 
     OSStatus theStatus = SecItemDelete((__bridge CFDictionaryRef)theQueryDictionary);
     if (theStatus != errSecSuccess)

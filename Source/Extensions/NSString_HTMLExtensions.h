@@ -1,8 +1,8 @@
 //
-//  NSIndexPath_Extensions.m
+//  NSString_Extensions.h
 //  TouchCode
 //
-//  Created by Jonathan Wight on 07/23/08.
+//  Created by Jonathan Wight on 07/01/08.
 //  Copyright 2011 toxicsoftware.com. All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
@@ -29,33 +29,12 @@
 //  authors and should not be interpreted as representing official policies, either expressed
 //  or implied, of toxicsoftware.com.
 
-#import "NSIndexPath_Extensions.h"
+#import <Foundation/Foundation.h>
 
-@implementation NSIndexPath (NSIndexPath_Extensions)
+@interface NSString (NSString_HTMLExtensions)
 
-+ (id)indexPathWithString:(NSString *)inString
-{
-NSIndexPath *theIndexPath = [[NSIndexPath alloc] init];
+- (NSString *)stringByTidyingHTMLEntities;
 
-NSArray *theComponents = [inString componentsSeparatedByString:@","];
-for (NSString *theComponent in theComponents)
-	{
-	theIndexPath = [theIndexPath indexPathByAddingIndex:[theComponent integerValue]];
-	}
-
-return(theIndexPath);
-}
-
-- (NSString *)stringValue
-{
-NSMutableArray *theComponents = [NSMutableArray arrayWithCapacity:[self length]];
-
-for (NSUInteger N = 0; N != [self length]; ++N)
-	{
-	[theComponents addObject:[NSString stringWithFormat:@"%d", [self indexAtPosition:N]]];
-	}
-
-return([theComponents componentsJoinedByString:@","]);
-}
+- (NSString *)stringByFlatteningHTML;
 
 @end

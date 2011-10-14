@@ -35,11 +35,11 @@
 #import "CMyURLResponse.h"
 
 @interface CHTTPClient ()
-@property (readwrite, nonatomic, retain) NSURLRequest *request;
+@property (readwrite, nonatomic, strong) NSURLRequest *request;
 @property (readwrite, nonatomic, assign) CFReadStreamRef readStream;
-@property (readwrite, nonatomic, retain) NSMutableData *initialBuffer;
-@property (readwrite, nonatomic, retain) NSMutableData *buffer;
-@property (readwrite, nonatomic, retain) CTemporaryData *data;
+@property (readwrite, nonatomic, strong) NSMutableData *initialBuffer;
+@property (readwrite, nonatomic, strong) NSMutableData *buffer;
+@property (readwrite, nonatomic, strong) CTemporaryData *data;
 @property (readwrite, nonatomic, assign) CFHTTPMessageRef requestMessage;
 @property (readwrite, nonatomic, assign) CFHTTPMessageRef responseMessage;
 

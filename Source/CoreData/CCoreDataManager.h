@@ -48,16 +48,16 @@
 
 + (NSURL *)modelURLForName:(NSString *)inName;
 
-@property (readwrite, retain) NSString *name;
-@property (readwrite, retain) NSURL *modelURL;
-@property (readwrite, retain) NSURL *persistentStoreURL;
-@property (readwrite, retain) NSString *storeType;
+@property (readwrite, strong) NSString *name;
+@property (readwrite, strong) NSURL *modelURL;
+@property (readwrite, strong) NSURL *persistentStoreURL;
+@property (readwrite, strong) NSString *storeType;
 @property (readwrite, assign) BOOL forceReplace;
-@property (readwrite, retain) NSDictionary *storeOptions;
+@property (readwrite, strong) NSDictionary *storeOptions;
 
-@property (readwrite, nonatomic, retain) NSPersistentStoreCoordinator *persistentStoreCoordinator;
-@property (readwrite, nonatomic, retain) NSManagedObjectModel *managedObjectModel;
-@property (readwrite, nonatomic, retain) NSManagedObjectContext *managedObjectContext;
+@property (readwrite, nonatomic, strong) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+@property (readwrite, nonatomic, strong) NSManagedObjectModel *managedObjectModel;
+@property (readwrite, nonatomic, strong) NSManagedObjectContext *managedObjectContext;
 
 @property (readwrite, assign) id <CCoreDataManagerDelegate> delegate;
 

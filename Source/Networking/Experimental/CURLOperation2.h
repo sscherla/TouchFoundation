@@ -35,9 +35,9 @@
     NSURLRequest *request;
 }
 
-@property (readonly, retain) NSURLRequest *request;
-@property (readonly, retain) NSURLResponse *response;
-@property (readonly, retain) NSError *error;
+@property (readonly, strong) NSURLRequest *request;
+@property (readonly, strong) NSURLResponse *response;
+@property (readonly, strong) NSError *error;
 
 - (id)initWithRequest:(NSURLRequest *)inRequest;
 

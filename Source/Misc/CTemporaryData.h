@@ -39,8 +39,8 @@
 }
 
 @property (readonly, nonatomic, assign) size_t memoryLimit;
-@property (readonly, nonatomic, retain) NSData *data;
-@property (readonly, nonatomic, retain) NSURL *URL;
+@property (readonly, nonatomic, strong) NSData *data;
+@property (readonly, nonatomic, strong) NSURL *URL;
 @property (readonly, nonatomic, assign) size_t length;
 
 - (id)initWithMemoryLimit:(size_t)inDataLimit;
