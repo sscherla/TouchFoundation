@@ -204,14 +204,14 @@
     NSString *theContentType = [[theComponents objectAtIndex:0] stringByTrimmingCharactersInSet:theWSCharacterSet];
     
     NSMutableDictionary *theMetadata = [NSMutableDictionary dictionary];
-    if (theComponents.count > 1)
-        {
-        for (NSString *theComponent in [theComponents subarrayWithRange:(NSRange){ .location = 1, .length = theComponents.count - 1 }])
-            {
-            NSLog(@"%@", theComponent);
-            
-            }
-        }
+//    if (theComponents.count > 1)
+//        {
+//        #warning TODO WIP
+//        for (NSString *theComponent in [theComponents subarrayWithRange:(NSRange){ .location = 1, .length = theComponents.count - 1 }])
+//            {
+//            NSLog(@"%@", theComponent);
+//            }
+//        }
 
     
     NSString *theType = (__bridge_transfer NSString *)UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (__bridge CFStringRef)theContentType, NULL);
