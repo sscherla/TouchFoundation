@@ -33,6 +33,7 @@
 
 @interface CNetworkManager : NSObject
 
++ (void)setSharedInstanceClass:(Class)inClass;
 + (CNetworkManager *)sharedInstance;
 
 - (void)sendRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLResponse*, NSData*, NSError*))handler;

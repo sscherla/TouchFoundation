@@ -32,7 +32,6 @@
 #import "CNetworkManager.h"
 
 #import "Asserts.h"
-#import "CTestNetworkManager.h"
 #import "CTypedData.h"
 
 @interface CNetworkManager ()
@@ -45,17 +44,27 @@
 @synthesize operationQueue;
 @synthesize connectionCount;
 
+static Class gSingletonClass = NULL;
 static CNetworkManager *gSharedInstance = NULL;
+
++ (void)setSharedInstanceClass:(Class)inClass
+    {
+    NSParameterAssert(gSingletonClass == NULL);
+    NSParameterAssert(inClass != NULL);
+    //
+    gSingletonClass = inClass;
+    }
 
 + (CNetworkManager *)sharedInstance
     {
     static dispatch_once_t sOnceToken = 0;
     dispatch_once(&sOnceToken, ^{
-        #if APPSTORE == 0
-        gSharedInstance = [[CTestNetworkManager alloc] init];
-        #else
-        gSharedInstance = [[CNetworkManager alloc] init];
-        #endif
+        if (gSingletonClass == NULL)
+            {
+            gSingletonClass = self;
+            }
+        gSharedInstance = [[gSingletonClass alloc] init];
+        NSParameterAssert([gSharedInstance isKindOfClass:[self class]]);
         });
     return(gSharedInstance);
     }
