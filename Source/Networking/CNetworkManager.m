@@ -51,7 +51,7 @@ static CNetworkManager *gSharedInstance = NULL;
     {
     static dispatch_once_t sOnceToken = 0;
     dispatch_once(&sOnceToken, ^{
-        #if DEBUG == 1
+        #if APPSTORE == 0
         gSharedInstance = [[CTestNetworkManager alloc] init];
         #else
         gSharedInstance = [[CNetworkManager alloc] init];
