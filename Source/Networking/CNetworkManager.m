@@ -33,16 +33,19 @@
 
 #import "Asserts.h"
 #import "CTypedData.h"
+#import "CNetworkActivityManager.h"
 
 @interface CNetworkManager ()
 @property (readwrite, nonatomic, strong) NSOperationQueue *operationQueue;
-@property (readwrite, nonatomic, assign) NSInteger connectionCount;
+@property (readwrite, nonatomic, strong) CNetworkActivityManager *activityManager;
+@property (readwrite, nonatomic, strong) NSMutableSet *currentRequests;
 @end
 
 @implementation CNetworkManager
 
 @synthesize operationQueue;
-@synthesize connectionCount;
+@synthesize activityManager;
+@synthesize currentRequests;
 
 static Class gSingletonClass = NULL;
 static CNetworkManager *gSharedInstance = NULL;
@@ -74,24 +77,10 @@ static CNetworkManager *gSharedInstance = NULL;
     if ((self = [super init]) != NULL)
         {
         operationQueue = [NSOperationQueue mainQueue];
+        activityManager = [[CNetworkActivityManager alloc] init];
+        currentRequests = [[NSMutableSet alloc] init];
         }
     return self;
-    }
-
-- (void)setConnectionCount:(NSInteger)inConnectionCount
-    {
-    #if TARGET_OS_IPHONE == 1
-    if (connectionCount == 0 && inConnectionCount == 1)
-        {
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
-        }
-    else if (connectionCount == 1 && inConnectionCount == 0)
-        {
-        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-        }
-    #endif /* TARGET_OS_IPHONE == 1 */
-
-    connectionCount = inConnectionCount;
     }
 
 - (void)sendRequest:(NSURLRequest *)request completionHandler:(void (^)(NSURLResponse*, NSData*, NSError*))handler
@@ -101,8 +90,9 @@ static CNetworkManager *gSharedInstance = NULL;
 
 - (void)sendRequest:(NSURLRequest *)request shouldBackground:(BOOL)inShouldBackground completionHandler:(void (^)(NSURLResponse*, NSData*, NSError*))handler;
     {
-    self.connectionCount += 1;
-
+    [self.activityManager addNetworkActivity];
+    [self.currentRequests addObject:request];
+    
     #if TARGET_OS_IPHONE == 1
     UIBackgroundTaskIdentifier theBackgroundTaskIdentifier = UIBackgroundTaskInvalid;
     if (inShouldBackground)
@@ -153,7 +143,7 @@ static CNetworkManager *gSharedInstance = NULL;
             handler(response, data, error);
             }
 
-        self.connectionCount -= 1;
+
 
         #if TARGET_OS_IPHONE == 1
         if (inShouldBackground)
@@ -162,6 +152,9 @@ static CNetworkManager *gSharedInstance = NULL;
             }
         #endif /* TARGET_OS_IPHONE == 1 */
 
+        [self.activityManager removeNetworkActivity];
+        [self.currentRequests removeObject:request];
+        NSLog(@">>> %@", self.currentRequests);
 
 //        double delayInSeconds = 30.0;
 //        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (dispatch_time_t)(delayInSeconds * NSEC_PER_SEC));
