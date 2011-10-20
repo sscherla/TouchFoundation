@@ -46,15 +46,13 @@
 
     int theFileDescriptor = mkstemp(thePathBuffer);
 
-    NSLog(@"mkstemp: %s", thePathBuffer);
-
     if (theFileDescriptor >= 0)
         {
         theFileHandle = [[NSFileHandle alloc] initWithFileDescriptor:theFileDescriptor];
         }
     else
         {
-        NSLog(@"Could not create temp file: %d", errno);
+        // TODO: We should really do something here...
         }
 
     return(theFileHandle);
@@ -64,12 +62,10 @@
     {
     NSURL *theURL = NULL;
     char thePathBuffer[1024];
-//    memset(thePathBuffer, 0, 1024);
 
     int theFileDescriptor = [self fileDescriptor];
     if (fcntl(theFileDescriptor, F_GETPATH, thePathBuffer) == 0)
         {
-        NSLog(@">> %s\n", thePathBuffer);
         theURL = [NSURL fileURLWithPath:[NSString stringWithUTF8String:thePathBuffer]];
         }
 

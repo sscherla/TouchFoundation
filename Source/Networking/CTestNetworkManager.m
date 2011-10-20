@@ -62,7 +62,7 @@
             {
             if (self.failureRate > 0.0f && RND() <= self.failureRate)
                 {
-                NSLog(@"Pretending to fail a request.");
+                LogInfo_(@"Pretending to fail a request.");
                 if (handler)
                     {
                     NSDictionary *theUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:

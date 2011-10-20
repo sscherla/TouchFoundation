@@ -174,11 +174,6 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
             }
         }
 
-//    if (theObject == NULL)
-//        {
-//        NSLog(@"CACHE MISS: %@", inKey);
-//        }
-
     return(theObject);
     }
 

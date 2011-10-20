@@ -38,7 +38,6 @@
 @interface CNetworkManager ()
 @property (readwrite, nonatomic, strong) NSOperationQueue *operationQueue;
 @property (readwrite, nonatomic, strong) CNetworkActivityManager *activityManager;
-@property (readwrite, nonatomic, strong) NSMutableSet *currentRequests;
 @end
 
 @implementation CNetworkManager
@@ -154,7 +153,6 @@ static CNetworkManager *gSharedInstance = NULL;
 
         [self.activityManager removeNetworkActivity];
         [self.currentRequests removeObject:request];
-        NSLog(@">>> %@", self.currentRequests);
 
 //        double delayInSeconds = 30.0;
 //        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (dispatch_time_t)(delayInSeconds * NSEC_PER_SEC));

@@ -33,6 +33,8 @@
 
 @interface CNetworkManager : NSObject
 
+@property (readonly, nonatomic, strong) NSMutableSet *currentRequests;
+
 + (void)setSharedInstanceClass:(Class)inClass;
 + (CNetworkManager *)sharedInstance;
 
