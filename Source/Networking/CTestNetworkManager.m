@@ -38,6 +38,7 @@
 @synthesize enabled;
 @synthesize successCount;
 @synthesize failureRate;
+@synthesize failurePattern;
 
 - (id)init
     {
@@ -46,6 +47,7 @@
         enabled = NO;
         successCount = 3;
         failureRate = 1.0f;
+        failurePattern = NULL;
         }
     return self;
     }
@@ -60,13 +62,31 @@
             }
         else
             {
+            BOOL theShouldFailFlag = NO;
+
+            if (self.failurePattern.length > 0)
+                {
+                NSError *theError = NULL;
+                NSRegularExpression *theExpression = [NSRegularExpression regularExpressionWithPattern:self.failurePattern options:NSRegularExpressionCaseInsensitive error:&theError];
+               if ([theExpression firstMatchInString:request.URL.absoluteString options:0 range:(NSRange){ .length = request.URL.absoluteString.length }] != NULL)
+                    {
+                    theShouldFailFlag = YES;
+                    }
+                }
+            
             if (self.failureRate > 0.0f && RND() <= self.failureRate)
+                {
+                theShouldFailFlag = YES;
+                }
+
+            if (theShouldFailFlag == YES)
                 {
                 LogInfo_(@"Pretending to fail a request.");
                 if (handler)
                     {
                     NSDictionary *theUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                         @"We're pretending to fail here.", NSLocalizedDescriptionKey,
+                        request, @"request",
                         NULL];
                     NSError *theError = [NSError errorWithDomain:@"TODO_DOMAIN" code:-1 userInfo:theUserInfo];
                     handler(NULL, NULL, theError);

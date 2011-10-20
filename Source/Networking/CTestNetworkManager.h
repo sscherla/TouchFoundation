@@ -36,5 +36,6 @@
 @property (readwrite, nonatomic, assign) BOOL enabled;
 @property (readwrite, nonatomic, assign) NSUInteger successCount;
 @property (readwrite, nonatomic, assign) float failureRate;
+@property (readwrite, nonatomic, assign) NSString *failurePattern;
 
 @end
