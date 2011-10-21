@@ -94,14 +94,13 @@
                 if (inShouldBackground)
                     {
                     theBackgroundTaskIdentifier = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:NULL];
-                    NSLog(@"Background Task Identifier: %d", theBackgroundTaskIdentifier);
                     }
                 #endif /* TARGET_OS_IPHONE == 1 */
 
-                NSLog(@"DELAYING...");
+                LogDebug_(@"Delaying request (%@)", request.URL);
                 dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC));
                 dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                    NSLog(@"FIRING...");
+                LogDebug_(@"Fire delayed request (%@)", request.URL);
                     if (theShouldFailFlag == YES)
                         {
                         [self failRequest:request handler:handler];
