@@ -33,12 +33,19 @@
 
 #define RND() (float)arc4random() / (float)UINT32_MAX
 
+@interface CTestNetworkManager()
+- (void)failRequest:(NSURLRequest *)request handler:(void (^)(NSURLResponse*, NSData*, NSError*))handler;
+@end
+
+#pragma mark -
+
 @implementation CTestNetworkManager
 
 @synthesize enabled;
 @synthesize successCount;
 @synthesize failureRate;
 @synthesize failurePattern;
+@synthesize delayTime;
 
 - (id)init
     {
@@ -48,6 +55,7 @@
         successCount = 3;
         failureRate = 1.0f;
         failurePattern = NULL;
+        delayTime = 10.0;
         }
     return self;
     }
@@ -79,24 +87,72 @@
                 theShouldFailFlag = YES;
                 }
 
-            if (theShouldFailFlag == YES)
+            if (self.delayTime > 0.0)
                 {
-                LogInfo_(@"Pretending to fail a request.");
-                if (handler)
+                #if TARGET_OS_IPHONE == 1
+                UIBackgroundTaskIdentifier theBackgroundTaskIdentifier = UIBackgroundTaskInvalid;
+                if (inShouldBackground)
                     {
-                    NSDictionary *theUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                        @"We're pretending to fail here.", NSLocalizedDescriptionKey,
-                        request, @"request",
-                        NULL];
-                    NSError *theError = [NSError errorWithDomain:@"TODO_DOMAIN" code:-1 userInfo:theUserInfo];
-                    handler(NULL, NULL, theError);
+                    theBackgroundTaskIdentifier = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:NULL];
+                    NSLog(@"Background Task Identifier: %d", theBackgroundTaskIdentifier);
                     }
-                return;
+                #endif /* TARGET_OS_IPHONE == 1 */
+
+                NSLog(@"DELAYING...");
+                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC));
+                dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                    NSLog(@"FIRING...");
+                    if (theShouldFailFlag == YES)
+                        {
+                        [self failRequest:request handler:handler];
+                        return;
+                        }
+                    else
+                        {
+                        [super sendRequest:request shouldBackground:inShouldBackground completionHandler:handler];
+                        }
+
+                    #if TARGET_OS_IPHONE == 1
+                    if (inShouldBackground)
+                        {
+                        [[UIApplication sharedApplication] endBackgroundTask:theBackgroundTaskIdentifier];
+                        }
+                    #endif /* TARGET_OS_IPHONE == 1 */
+                    });
+                }
+            else
+                {
+                if (theShouldFailFlag == YES)
+                    {
+                    [self failRequest:request handler:handler];
+                    return;
+                    }
+                else
+                    {
+                    [super sendRequest:request shouldBackground:inShouldBackground completionHandler:handler];
+                    }
                 }
             }
-        }
 
-    [super sendRequest:request shouldBackground:inShouldBackground completionHandler:handler];
+        }
+    else
+        {
+        [super sendRequest:request shouldBackground:inShouldBackground completionHandler:handler];
+        }
+    }
+
+- (void)failRequest:(NSURLRequest *)request handler:(void (^)(NSURLResponse*, NSData*, NSError*))handler;
+    {
+    LogInfo_(@"Pretending to fail a request.");
+    if (handler)
+        {
+        NSDictionary *theUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+            @"We're pretending to fail here.", NSLocalizedDescriptionKey,
+            request, @"request",
+            NULL];
+        NSError *theError = [NSError errorWithDomain:@"TODO_DOMAIN" code:-1 userInfo:theUserInfo];
+        handler(NULL, NULL, theError);
+        }
     }
 
 @end
