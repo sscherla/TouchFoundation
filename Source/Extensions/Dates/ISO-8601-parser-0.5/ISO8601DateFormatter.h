@@ -61,9 +61,9 @@ extern unichar ISO8601DefaultTimeSeparatorCharacter;
 
 #pragma mark Unparsing
 
-@property ISO8601DateFormat format;
-@property BOOL includeTime;
-@property unichar timeSeparator;
+@property (nonatomic) ISO8601DateFormat format;
+@property (nonatomic) BOOL includeTime;
+@property (nonatomic) unichar timeSeparator;
 
 - (NSString *) stringFromDate:(NSDate *)date;
 - (NSString *) stringFromDate:(NSDate *)date timeZone:(NSTimeZone *)timeZone;

@@ -172,7 +172,7 @@ static BOOL is_leap_year(unsigned year);
 
 		if (*ch == 'T') {
 			//There is no date here, only a time. Set the date to now; then we'll parse the time.
-			isValidDate = isdigit(*++ch);
+			isValidDate = (BOOL)isdigit(*++ch);
 
 			year = nowComponents.year;
 			month_or_week = nowComponents.month;
@@ -519,8 +519,8 @@ static BOOL is_leap_year(unsigned year);
 			components.year = year;
 			components.day = day;
 			components.hour = hour;
-			components.minute = minute;
-			components.second = second;
+			components.minute = (NSInteger)minute;
+			components.second = (NSInteger)second;
 
 			switch(dateSpecification) {
 				case monthAndDate:
