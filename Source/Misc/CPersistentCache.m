@@ -94,7 +94,7 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
 		{
         NSParameterAssert(inName.length > 0);
         name = inName;
-        diskWritesEnabled = NO;
+        diskWritesEnabled = YES;
         keyTransformer = [NSValueTransformer valueTransformerForName:NSKeyedUnarchiveFromDataTransformerName];
         objectCache = [[NSCache alloc] init];
 //        NSString *theQueueName = [NSString stringWithFormat:@"org.touchcode.CPersistentCache.%@", inName];
