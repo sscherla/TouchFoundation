@@ -45,6 +45,7 @@
 @property (readwrite, nonatomic, strong) NSURL *URL;
 @property (readwrite, nonatomic, strong) NSValueTransformer *keyTransformer;
 @property (readwrite, nonatomic, strong) NSCache *objectCache;
+@property (readwrite, nonatomic, assign) dispatch_queue_t queue;
 
 - (NSDictionary *)metadataForKey:(id)inKey;
 - (NSString *)pathComponentForKey:(id)inKey;
@@ -61,6 +62,7 @@
 @synthesize URL;
 @synthesize keyTransformer;
 @synthesize objectCache;
+@synthesize queue;
 
 static dispatch_queue_t sQueue = NULL;
 static NSMutableDictionary *sNamedPersistentCaches = NULL;
@@ -88,15 +90,26 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
 
 - (id)initWithName:(NSString *)inName
 	{
-	if ((self = [super init]) != NULL)
+	if ((self = [self init]) != NULL)
 		{
+        NSParameterAssert(inName.length > 0);
         name = inName;
         diskWritesEnabled = NO;
         keyTransformer = [NSValueTransformer valueTransformerForName:NSKeyedUnarchiveFromDataTransformerName];
         objectCache = [[NSCache alloc] init];
-		}
+//        NSString *theQueueName = [NSString stringWithFormat:@"org.touchcode.CPersistentCache.%@", inName];
+//        queue = dispatch_queue_create([theQueueName UTF8String], DISPATCH_QUEUE_SERIAL);
+        queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
+        dispatch_retain(queue);
+        }
 	return(self);
 	}
+
+- (void)dealloc
+    {
+    dispatch_release(queue);
+    queue = NULL;
+    }
 
 - (NSURL *)URL
     {
@@ -202,40 +215,40 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
     if (self.diskWritesEnabled == YES)
         {
         NSURL *theURL = [self.URL URLByAppendingPathComponent:[self pathComponentForKey:inKey]];
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^(void) {
+
+        // Generate the data URL...
+        NSURL *theDataURL = theURL;
+        NSString *theFilenameExtension = (__bridge_transfer NSString *)UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)theTypedData.type, kUTTagClassFilenameExtension);
+        if (theFilenameExtension)
+            {
+            theDataURL = [theDataURL URLByAppendingPathExtension:theFilenameExtension];
+            }
+
+        // Generate the metadata...
+        NSMutableDictionary *theMetadata = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+            [theDataURL lastPathComponent], @"href",
+            [NSNumber numberWithUnsignedInteger:inCost], @"cost",
+            theTypedData.type, @"type",
+            [self.keyTransformer reverseTransformedValue:inKey], @"key",
+#if DEBUG == 1
+            [inKey description], @"key_description",
+#endif
+            NULL];
+        if (theTypedData.metadata != NULL)
+            {
+            [theMetadata addEntriesFromDictionary:theTypedData.metadata];
+            }
+        NSParameterAssert(theTypedData.data != NULL);
+
+        dispatch_async(self.queue, ^(void) {
 
             NSError *theError = NULL;
-
-            NSURL *theDataURL = theURL;
-            NSString *theFilenameExtension = (__bridge_transfer NSString *)UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)theTypedData.type, kUTTagClassFilenameExtension);
-            if (theFilenameExtension)
-                {
-                theDataURL = [theDataURL URLByAppendingPathExtension:theFilenameExtension];
-                }
-
-            NSParameterAssert(theTypedData.data != NULL);
             [theTypedData.data writeToURL:theDataURL options:0 error:&theError];
             // TODO:error checking.
-
-            NSMutableDictionary *theMetadata = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                [theDataURL lastPathComponent], @"href",
-                [NSNumber numberWithUnsignedInteger:inCost], @"cost",
-                theTypedData.type, @"type",
-                [self.keyTransformer reverseTransformedValue:inKey], @"key",
-    #if DEBUG == 1
-                [inKey description], @"key_description",
-    #endif
-                NULL];
-
-            if (theTypedData.metadata != NULL)
-                {
-                [theMetadata addEntriesFromDictionary:theTypedData.metadata];
-                }
 
             NSData *theData = [NSPropertyListSerialization dataWithPropertyList:theMetadata format:NSPropertyListBinaryFormat_v1_0 options:0 error:&theError];
             // TODO:error checking.
             [theData writeToURL:[theURL URLByAppendingPathExtension:@"metadata.plist"] options:0 error:&theError];
-            // TODO:error checking.
             });
         }
     }
@@ -248,7 +261,7 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
         }
 
     #warning TODO - this needs to happen on the same queue as writes (but needs to be immunue to diskWritesEnabled)
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^(void) {
+    dispatch_async(self.queue, ^(void) {
         NSDictionary *theMetadata = [self metadataForKey:inKey];
         if (theMetadata != NULL)
             {
