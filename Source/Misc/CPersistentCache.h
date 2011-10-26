@@ -34,6 +34,7 @@
 @interface CPersistentCache : NSObject
 
 @property (readonly, nonatomic, strong) NSString *name;
+@property (readonly, nonatomic, assign) BOOL diskWritesEnabled;
 
 + (CPersistentCache *)persistentCacheWithName:(NSString *)inName;
 
