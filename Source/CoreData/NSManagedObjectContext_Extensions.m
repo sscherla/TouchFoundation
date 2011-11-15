@@ -197,10 +197,7 @@ return(theObject);
         
     @try
         {
-        if (block)
-            {
-            block();
-            }
+        [self performBlockAndWait:block];
         
         // We only save _if_ we have changes (to prevent notifications from firing).
         if ([self hasChanges])
