@@ -62,43 +62,108 @@ return(theObject);
 }
 
 - (id)fetchObjectOfEntityForName:(NSString *)inEntityName predicate:(NSPredicate *)inPredicate createIfNotFound:(BOOL)inCreateIfNotFound wasCreated:(BOOL *)outWasCreated error:(NSError **)outError
-{
-id theObject = NULL;
-NSArray *theObjects = [self fetchObjectsOfEntityForName:inEntityName predicate:inPredicate error:outError];
-BOOL theWasCreatedFlag = NO;
-if (theObjects)
-	{
-	const NSUInteger theCount = theObjects.count;
-	if (theCount == 0)
-		{
-		if (inCreateIfNotFound == YES)
-			{
-			theObject = [NSEntityDescription insertNewObjectForEntityForName:inEntityName inManagedObjectContext:self];
-			if (theObject)
-				theWasCreatedFlag = YES;
-			}
-		}
-	else if (theCount == 1)
-		{
-		theObject = [theObjects lastObject];
-		}
-	else
-		{
-		if (outError)
-			{
-			NSDictionary *theUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-				[NSString stringWithFormat:@"Expected 1 object (of type %@) but got %d instead (%@).", inEntityName, theObjects.count, inPredicate], NSLocalizedDescriptionKey,
-				NULL];
-			
-			*outError = [NSError errorWithDomain:@"TODO_DOMAIN" code:-1 userInfo:theUserInfo];
-			}
-		}
-	}
-if (theObject && outWasCreated)
-	*outWasCreated = theWasCreatedFlag;
-	
-return(theObject);
-}
+    {
+    id theObject = NULL;
+    NSArray *theObjects = [self fetchObjectsOfEntityForName:inEntityName predicate:inPredicate error:outError];
+    BOOL theWasCreatedFlag = NO;
+    if (theObjects)
+        {
+        const NSUInteger theCount = theObjects.count;
+        if (theCount == 0)
+            {
+            if (inCreateIfNotFound == YES)
+                {
+                theObject = [NSEntityDescription insertNewObjectForEntityForName:inEntityName inManagedObjectContext:self];
+                if (theObject)
+                    theWasCreatedFlag = YES;
+                }
+            }
+        else if (theCount == 1)
+            {
+            theObject = [theObjects lastObject];
+            }
+        else
+            {
+            if (outError)
+                {
+                NSDictionary *theUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                    [NSString stringWithFormat:@"Expected 1 object (of type %@) but got %d instead (%@).", inEntityName, theObjects.count, inPredicate], NSLocalizedDescriptionKey,
+                    NULL];
+                
+                *outError = [NSError errorWithDomain:@"TODO_DOMAIN" code:-1 userInfo:theUserInfo];
+                }
+            }
+        }
+    if (theObject && outWasCreated)
+        *outWasCreated = theWasCreatedFlag;
+        
+    return(theObject);
+    }
+
+- (id)fetchObjectOfEntityForName:(NSString *)inEntityName properties:(NSDictionary *)inProperties createIfNotFound:(BOOL)inCreateIfNotFound wasCreated:(BOOL *)outWasCreated error:(NSError **)outError
+    {
+    id theObject = NULL;
+    
+    
+    NSMutableArray *theSubpredicates = [NSMutableArray array];
+    
+    [inProperties enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        [theSubpredicates addObject:[NSPredicate predicateWithFormat:@"%K == %@", key, obj]];
+        }];
+
+    NSPredicate *thePredicate = NULL;
+    if (theSubpredicates.count == 1)
+        {
+        thePredicate = [theSubpredicates lastObject];
+        }
+    else
+        {
+        thePredicate = [[NSCompoundPredicate alloc] initWithType:NSAndPredicateType subpredicates:theSubpredicates];
+        }
+    
+    
+    NSArray *theObjects = [self fetchObjectsOfEntityForName:inEntityName predicate:thePredicate error:outError];
+    BOOL theWasCreatedFlag = NO;
+    if (theObjects)
+        {
+        const NSUInteger theCount = theObjects.count;
+        if (theCount == 0)
+            {
+            if (inCreateIfNotFound == YES)
+                {
+                theObject = [NSEntityDescription insertNewObjectForEntityForName:inEntityName inManagedObjectContext:self];
+                if (theObject)
+                    {
+                    theWasCreatedFlag = YES;
+                    [inProperties enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+                        [theObject setValue:obj forKey:key];
+                        }];
+                    }
+                }
+            }
+        else if (theCount == 1)
+            {
+            theObject = [theObjects lastObject];
+            }
+        else
+            {
+            if (outError)
+                {
+                NSDictionary *theUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                    [NSString stringWithFormat:@"Expected 1 object (of type %@) but got %d instead.", inEntityName, theObjects.count], NSLocalizedDescriptionKey,
+                    NULL];
+                
+                *outError = [NSError errorWithDomain:@"TODO_DOMAIN" code:-1 userInfo:theUserInfo];
+                }
+            }
+        }
+    if (theObject && outWasCreated)
+        *outWasCreated = theWasCreatedFlag;
+        
+    return(theObject);
+    }
+
+
 
 #pragma mark -
 
