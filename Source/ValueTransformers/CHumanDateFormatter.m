@@ -50,6 +50,11 @@
 
 - (NSString *)stringFromDate:(NSDate *)inDate
     {
+    if (inDate == NULL)
+        {
+        return(NULL);
+        }
+        
     NSCalendar *theCalendar = [NSCalendar currentCalendar];
     
     NSMutableArray *theComponents = [NSMutableArray array];
