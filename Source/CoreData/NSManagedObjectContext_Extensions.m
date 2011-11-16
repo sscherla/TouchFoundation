@@ -163,15 +163,15 @@ return(theObject);
     return(theObject);
     }
 
-
-
 #pragma mark -
 
-- (BOOL)performTransaction:(void (^)(void))block error:(NSError **)outError
+- (void)assertHasNoChanges
     {
-    BOOL theResult = NO;
-    
-    #if 1
+    Assert_([self hasChanges] == NO, @"Managed object context has changes.");
+    }
+
+- (void)logChanges
+    {
     if ([self hasChanges])
         {
 		NSLog(@"Managed object context has unsaved changes and probably shouldn't! (%@)", self);
@@ -191,38 +191,51 @@ return(theObject);
 			NSLog(@"deletedObjects: %@", [self deletedObjects]);
 			}
         }
-    #endif
+    }
+
+- (BOOL)performTransaction:(void (^)(void))block error:(NSError **)outError
+    {
+    AssertParameter_(block);
+    
+    [self logChanges];
         
-    @try
-        {
-        [self performBlockAndWait:block];
-        
-        // We only save _if_ we have changes (to prevent notifications from firing).
-        if ([self hasChanges])
+    __block BOOL theResult = NO;
+    [self performBlockAndWait:^{
+        @try
             {
-            theResult = [self save:outError];
+            block();
+            
+            // We only save _if_ we have changes (to prevent notifications from firing)
+            if ([self hasChanges] == YES)
+                {
+                theResult = [self save:outError];
+                }
             }
-        }
-    @catch (NSException * e)
-        {
-        if ([self hasChanges])
+        @catch (NSException * e)
             {
-            [self rollback];
+            if ([self hasChanges])
+                {
+                [self rollback];
+                }
+            
+            if (outError)
+                {
+                NSDictionary *theUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                    [NSString stringWithFormat:@"Exception thrown while performing transaction: %@", e], NSLocalizedDescriptionKey,
+                    e, @"exception",
+                    NULL];
+                *outError = [NSError errorWithDomain:@"TODO_DOMAIN" code:-1 userInfo:theUserInfo];
+                }
             }
-        
-        if (outError)
-            {
-			NSDictionary *theUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-				[NSString stringWithFormat:@"Exception thrown while performing transaction: %@", e], NSLocalizedDescriptionKey,
-				e, @"exception",
-				NULL];
-            *outError = [NSError errorWithDomain:@"TODO_DOMAIN" code:-1 userInfo:theUserInfo];
-            }
-        }
-    @finally
-        {
-        }
+        }];
+    
     return(theResult);
     }
+
+- (void)performTransaction:(void (^)(void))block;
+    {
+    [self performTransaction:block error:NULL];
+    }
+
 
 @end
