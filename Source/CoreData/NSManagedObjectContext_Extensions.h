@@ -33,6 +33,12 @@
 
 @interface NSManagedObjectContext (NSManagedObjectContext_Extensions)
 
+#if DEBUG == 1
+@property (readwrite, nonatomic, retain) NSString *debugName;
+#endif
+
+- (NSManagedObjectContext *)newChildManagedObjectContext;
+
 - (NSUInteger)countOfObjectsOfEntityForName:(NSString *)inEntityName predicate:(NSPredicate *)inPredicate error:(NSError **)outError;
 
 - (NSArray *)fetchObjectsOfEntityForName:(NSString *)inEntityName predicate:(NSPredicate *)inPredicate error:(NSError **)outError;

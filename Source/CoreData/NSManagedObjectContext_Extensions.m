@@ -31,7 +31,32 @@
 
 #import "NSManagedObjectContext_Extensions.h"
 
+#import <objc/runtime.h>
+
+#import "CDebuggingManagedObjectContext.h"
+
 @implementation NSManagedObjectContext (NSManagedObjectContext_Extensions)
+
+#if DEBUG == 1
+static void *kDebugNameKey;
+
+- (NSString *)debugName
+    {
+    return(objc_getAssociatedObject(self, kDebugNameKey));
+    }
+    
+- (void)setDebugName:(NSString *)debugName
+    {
+    objc_setAssociatedObject(self, kDebugNameKey, debugName, OBJC_ASSOCIATION_RETAIN);
+    }
+#endif
+
+- (NSManagedObjectContext *)newChildManagedObjectContext
+    {
+    NSManagedObjectContext *theChildManagedObjectContext = [[[self class] alloc] initWithConcurrencyType:self.concurrencyType];
+    theChildManagedObjectContext.parentContext = self;
+    return(theChildManagedObjectContext);
+    }
 
 - (NSUInteger)countOfObjectsOfEntityForName:(NSString *)inEntityName predicate:(NSPredicate *)inPredicate error:(NSError **)outError
 {
@@ -198,6 +223,18 @@ return(theObject);
     AssertParameter_(block);
     
     [self logChanges];
+    if ([self hasChanges] && [self isKindOfClass:[CDebuggingManagedObjectContext class]])
+        {
+        NSArray *theCallstacks = ((CDebuggingManagedObjectContext *)self).callStacksForDirtyPerformBlocks;
+        if (theCallstacks == NULL)
+            {
+            LogDebug_(@"Dirty MOC found but callstacks empty.");
+            }
+        else
+            {
+            LogDebug_(@"%@", theCallstacks);
+            }
+        }
         
     __block BOOL theResult = NO;
     [self performBlockAndWait:^{
