@@ -36,6 +36,6 @@
 @interface NSDate (LiberalDates)
 
 + (NSDate *)dateWithInternetString:(NSString *)dateString;
-+ (NSDate *)dateWithInternetString:(NSString *)dateString usedFormatter:(NSDateFormatter **)formatter;
++ (NSDate *)dateWithInternetString:(NSString *)dateString useFormatter:(NSDateFormatter **)formatter;
 
 @end

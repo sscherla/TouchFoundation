@@ -36,13 +36,15 @@
 
 + (NSDate *)dateWithInternetString:(NSString *)dateString;
 {
-    return [self dateWithInternetString:dateString usedFormatter:nil];
+    return [self dateWithInternetString:dateString useFormatter:nil];
 }
 
-+ (NSDate *)dateWithInternetString:(NSString *)dateString usedFormatter:(NSDateFormatter **)outFormatter;
++ (NSDate *)dateWithInternetString:(NSString *)dateString useFormatter:(NSDateFormatter **)outFormatter;
 {
+    if (outFormatter && *outFormatter) return [*outFormatter dateFromString:dateString];
+    
 	NSDate *date = nil;
-
+    
 	for (NSDateFormatter *formatter in [NSDateFormatter allISO8601DateFormatters]) {
 		date = [formatter dateFromString:dateString];
 		if (date)
