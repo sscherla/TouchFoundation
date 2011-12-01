@@ -275,5 +275,11 @@ return(theObject);
     [self performTransaction:block error:NULL];
     }
 
+- (id)objectWithURL:(NSURL *)inURL
+    {
+    NSManagedObjectID *theObjectID = [self.persistentStoreCoordinator managedObjectIDForURIRepresentation:inURL];
+    NSManagedObject *theObject = [self objectWithID:theObjectID];
+    return(theObject);   
+    }
 
 @end

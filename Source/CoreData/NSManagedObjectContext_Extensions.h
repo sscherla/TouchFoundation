@@ -54,4 +54,6 @@
 - (BOOL)performTransaction:(void (^)(void))block error:(NSError **)outError;
 - (void)performTransaction:(void (^)(void))block;
 
+- (id)objectWithURL:(NSURL *)inURL;
+
 @end
