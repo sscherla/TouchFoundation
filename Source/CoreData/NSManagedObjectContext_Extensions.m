@@ -42,9 +42,8 @@ static void *kDebugNameKey;
 
 - (NSString *)description
     {
-    return([NSString stringWithFormat:@"%@ (%@)", [super description], self.debugName]);
+    return([NSString stringWithFormat:@"%@ (\"%@\", inserted: %d, updated: %d, deleted: %d)", [super description], self.debugNamePath, [self insertedObjects].count, [self updatedObjects].count, [self deletedObjects].count]);
     }
-
 
 - (NSString *)debugName
     {
@@ -55,6 +54,19 @@ static void *kDebugNameKey;
     {
     objc_setAssociatedObject(self, kDebugNameKey, debugName, OBJC_ASSOCIATION_RETAIN);
     }
+
+- (NSString *)debugNamePath
+    {
+    if (self.parentContext == NULL)
+        {
+        return(self.debugName);
+        }
+    else
+        {
+        return([NSString stringWithFormat:@"%@.%@", self.parentContext.debugNamePath, self.debugName]);
+        }
+    }
+
 #endif
 
 - (NSManagedObjectContext *)newChildManagedObjectContext
@@ -232,7 +244,10 @@ return(theObject);
     {
     AssertParameter_(block);
     
-    [self logChanges];
+    if ([self hasChanges])
+        {
+        [self logChanges];
+        }
     if ([self hasChanges] && [self isKindOfClass:[CDebuggingManagedObjectContext class]])
         {
         NSArray *theCallstacks = ((CDebuggingManagedObjectContext *)self).callStacksForDirtyPerformBlocks;

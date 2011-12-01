@@ -35,6 +35,7 @@
 
 #if DEBUG == 1
 @property (readwrite, nonatomic, retain) NSString *debugName;
+@property (readonly, nonatomic, retain) NSString *debugNamePath;
 #endif
 
 - (NSManagedObjectContext *)newChildManagedObjectContext;
