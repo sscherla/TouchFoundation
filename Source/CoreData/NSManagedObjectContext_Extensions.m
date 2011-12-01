@@ -40,6 +40,12 @@
 #if DEBUG == 1
 static void *kDebugNameKey;
 
+- (NSString *)description
+    {
+    return([NSString stringWithFormat:@"%@ (%@)", [super description], self.debugName]);
+    }
+
+
 - (NSString *)debugName
     {
     return(objc_getAssociatedObject(self, kDebugNameKey));
@@ -197,9 +203,13 @@ return(theObject);
 
 - (void)logChanges
     {
-    if ([self hasChanges])
+    if ([self hasChanges] == NO)
         {
-		NSLog(@"Managed object context has unsaved changes and probably shouldn't! (%@)", self);
+		NSLog(@"MOC (%@) is clean.", self);
+        }
+    else
+        {
+		NSLog(@"MOC (%@) has unsaved changes.", self);
 		
 		if ([self insertedObjects].count > 0)
 			{
