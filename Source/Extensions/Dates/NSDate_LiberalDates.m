@@ -36,21 +36,40 @@
 
 + (NSDate *)dateWithInternetString:(NSString *)dateString;
 {
-	NSDate *date = nil;
+    return [self dateWithInternetString:dateString useFormatter:nil];
+}
 
++ (NSDate *)dateWithInternetString:(NSString *)dateString useFormatter:(NSDateFormatter **)outFormatter;
+{
+    if (outFormatter && *outFormatter) return [*outFormatter dateFromString:dateString];
+    
+	NSDate *date = nil;
+    
 	for (NSDateFormatter *formatter in [NSDateFormatter allISO8601DateFormatters]) {
 		date = [formatter dateFromString:dateString];
-		if (date) return date;
+		if (date)
+        {
+            if (outFormatter) *outFormatter = formatter;
+            return date;
+        }
 	}
 
 	for (NSDateFormatter *formatter in [NSDateFormatter allRFC2822DateFormatters]) {
 		date = [formatter dateFromString:dateString];
-		if (date) return date;
+		if (date)
+        {
+            if (outFormatter) *outFormatter = formatter;
+            return date;
+        }
 	}
 
 	for (NSDateFormatter *formatter in [NSDateFormatter allInternetDateFormatters]) {
 		date = [formatter dateFromString:dateString];
-		if (date) return date;
+		if (date)
+        {
+            if (outFormatter) *outFormatter = formatter;
+            return date;
+        }
 	}
 
 	return date;
