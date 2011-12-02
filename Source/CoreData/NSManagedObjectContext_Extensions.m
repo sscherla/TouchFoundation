@@ -270,7 +270,7 @@ return(theObject);
             // We only save _if_ we have changes (to prevent notifications from firing)
             if ([self hasChanges] == YES)
                 {
-                LogDebug_(@"Saving %@ (%d inserted, %d updated, %d deleted)", self, [self insertedObjects].count, [self updatedObjects].count, [self deletedObjects].count);
+                LogDebug_(@"Saving %@", self);
                 theResult = [self save:outError];
                 }
             }
