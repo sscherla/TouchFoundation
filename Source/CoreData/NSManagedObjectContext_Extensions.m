@@ -240,7 +240,7 @@ return(theObject);
         }
     }
 
-- (BOOL)performTransaction:(void (^)(void))block error:(NSError **)outError
+- (BOOL)performBlockAndSave:(void (^)(void))block error:(NSError **)outError
     {
     AssertParameter_(block);
     
@@ -297,9 +297,9 @@ return(theObject);
     return(theResult);
     }
 
-- (void)performTransaction:(void (^)(void))block;
+- (void)performBlockAndSave:(void (^)(void))block;
     {
-    [self performTransaction:block error:NULL];
+    [self performBlockAndSave:block error:NULL];
     }
 
 - (id)objectWithURL:(NSURL *)inURL

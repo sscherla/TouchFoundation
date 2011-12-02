@@ -52,8 +52,8 @@
 - (void)assertHasNoChanges;
 - (void)logChanges;
 
-- (BOOL)performTransaction:(void (^)(void))block error:(NSError **)outError;
-- (void)performTransaction:(void (^)(void))block;
+- (BOOL)performBlockAndSave:(void (^)(void))block error:(NSError **)outError;
+- (void)performBlockAndSave:(void (^)(void))block;
 
 - (id)objectWithURL:(NSURL *)inURL;
 
