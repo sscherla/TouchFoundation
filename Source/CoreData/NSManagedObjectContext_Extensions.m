@@ -225,17 +225,17 @@ return(theObject);
 		
 		if ([self insertedObjects].count > 0)
 			{
-			NSLog(@"insertedObjects: %@", [self insertedObjects]);
+			NSLog(@"insertedObjects: %@", [[self insertedObjects] valueForKey:@"objectID"]);
 			}
 
 		if ([self updatedObjects].count > 0)
 			{
-			NSLog(@"updatedObjects: %@", [self updatedObjects]);
+			NSLog(@"updatedObjects: %@", [[self updatedObjects] valueForKey:@"objectID"]);
 			}
 
 		if ([self deletedObjects].count > 0)
 			{
-			NSLog(@"deletedObjects: %@", [self deletedObjects]);
+			NSLog(@"deletedObjects: %@", [[self deletedObjects] valueForKey:@"objectID"]);
 			}
         }
     }
@@ -276,6 +276,8 @@ return(theObject);
             }
         @catch (NSException * e)
             {
+            NSLog(@"EXCEPTION: %@", e);
+            
             if ([self hasChanges])
                 {
                 [self rollback];
