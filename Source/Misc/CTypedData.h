@@ -31,7 +31,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface CTypedData : NSObject
+@interface CTypedData : NSObject <NSCoding>
 
 @property (readonly, nonatomic, strong) NSString *type;
 @property (readonly, nonatomic, strong) NSData *data;

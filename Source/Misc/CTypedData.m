@@ -84,6 +84,24 @@
         }
     }
 
+- (void)encodeWithCoder:(NSCoder *)aCoder
+    {
+    [aCoder encodeObject:self.type forKey:@"type"];
+    [aCoder encodeObject:self.data forKey:@"data"];
+    [aCoder encodeObject:self.metadata forKey:@"metadata"];
+    }
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+    {
+    if ((self = [super init]) != NULL)
+        {
+        type = [aDecoder decodeObjectForKey:@"type"];
+        data = [aDecoder decodeObjectForKey:@"data"];
+        metadata = [aDecoder decodeObjectForKey:@"metadata"];
+        }
+    return self;
+    }
+
 @end
 
 #pragma mark -
