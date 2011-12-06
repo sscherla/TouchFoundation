@@ -1,5 +1,5 @@
 //
-//  CTypedData+JSONExtensions.h
+//  CTypedData_JSONExtensions.h
 //  knotes
 //
 //  Created by Jonathan Wight on 10/10/11.
@@ -8,7 +8,7 @@
 
 #import "CTypedData.h"
 
-@interface CTypedData (JSONExtensions)
+@interface CTypedData (CTypedData_JSONExtensions)
 
 - (NSDictionary *)asDictionary;
 

@@ -1,14 +1,14 @@
 //
-//  CTypedData+JSONExtensions.m
+//  CTypedData_JSONExtensions.m
 //  knotes
 //
 //  Created by Jonathan Wight on 10/10/11.
 //  Copyright (c) 2011 knotes. All rights reserved.
 //
 
-#import "CTypedData+JSONExtensions.h"
+#import "CTypedData_JSONExtensions.h"
 
-@implementation CTypedData (JSONExtensions)
+@implementation CTypedData (CTypedData_JSONExtensions)
 
 - (NSDictionary *)asDictionary
     {
