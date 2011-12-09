@@ -97,10 +97,10 @@
                     }
                 #endif /* TARGET_OS_IPHONE == 1 */
 
-                LogDebug_(@"Delaying request (%@)", request.URL);
+                NSLog(@"Delaying request (%@)", request.URL);
                 dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC));
                 dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                LogDebug_(@"Fire delayed request (%@)", request.URL);
+                NSLog(@"Fire delayed request (%@)", request.URL);
                     if (theShouldFailFlag == YES)
                         {
                         [self failRequest:request handler:handler];
@@ -142,7 +142,7 @@
 
 - (void)failRequest:(NSURLRequest *)request handler:(void (^)(NSURLResponse*, NSData*, NSError*))handler;
     {
-    LogInfo_(@"Pretending to fail a request.");
+    NSLog(@"Pretending to fail a request.");
     if (handler)
         {
         NSDictionary *theUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:

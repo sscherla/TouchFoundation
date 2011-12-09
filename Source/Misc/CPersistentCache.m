@@ -132,9 +132,11 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
         
         [self loadCacheMetadata];
         
+        #if TARGET_OS_IPHONE == 1
         applicationWillTerminateNotification = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillTerminateNotification object:[UIApplication sharedApplication] queue:NULL usingBlock:^(NSNotification *note) {
             [self shutdown];
             }];
+        #endif /* TARGET_OS_IPHONE == 1 */
             
         [self purge];
         }
@@ -260,6 +262,7 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
                 }
             }
             
+//        LogInfo_(@"Purged %d, skipped %d", thePurgeCount, theNotPurgeCount);
         });
     }
 

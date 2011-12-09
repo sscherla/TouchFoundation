@@ -253,11 +253,11 @@ return(theObject);
         NSArray *theCallstacks = ((CDebuggingManagedObjectContext *)self).callStacksForDirtyPerformBlocks;
         if (theCallstacks == NULL)
             {
-            LogDebug_(@"Dirty MOC found but callstacks empty.");
+            NSLog(@"Dirty MOC found but callstacks empty.");
             }
         else
             {
-            LogDebug_(@"%@", theCallstacks);
+            NSLog(@"%@", theCallstacks);
             }
         }
         
@@ -270,7 +270,7 @@ return(theObject);
             // We only save _if_ we have changes (to prevent notifications from firing)
             if ([self hasChanges] == YES)
                 {
-                LogDebug_(@"Saving %@", self);
+                NSLog(@"Saving %@", self);
                 theResult = [self save:outError];
                 }
             }

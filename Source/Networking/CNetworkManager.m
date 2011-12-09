@@ -33,17 +33,24 @@
 
 #import "Asserts.h"
 #import "CTypedData.h"
+
+#if TARGET_OS_IPHONE == 1
 #import "CNetworkActivityManager.h"
+#endif /* TARGET_OS_IPHONE == 1 */
 
 @interface CNetworkManager ()
 @property (readwrite, nonatomic, strong) NSOperationQueue *operationQueue;
+#if TARGET_OS_IPHONE == 1
 @property (readwrite, nonatomic, strong) CNetworkActivityManager *activityManager;
+#endif /* TARGET_OS_IPHONE == 1 */
 @end
 
 @implementation CNetworkManager
 
 @synthesize operationQueue;
+#if TARGET_OS_IPHONE == 1
 @synthesize activityManager;
+#endif /* TARGET_OS_IPHONE == 1 */
 @synthesize currentRequests;
 
 static Class gSingletonClass = NULL;
@@ -76,7 +83,9 @@ static CNetworkManager *gSharedInstance = NULL;
     if ((self = [super init]) != NULL)
         {
         operationQueue = [NSOperationQueue mainQueue];
+#if TARGET_OS_IPHONE == 1
         activityManager = [[CNetworkActivityManager alloc] init];
+#endif /* TARGET_OS_IPHONE == 1 */
         currentRequests = [[NSMutableSet alloc] init];
         }
     return self;
@@ -87,9 +96,11 @@ static CNetworkManager *gSharedInstance = NULL;
     [self sendRequest:request shouldBackground:NO completionHandler:handler];
     }
 
-- (void)sendRequest:(NSURLRequest *)request shouldBackground:(BOOL)inShouldBackground completionHandler:(void (^)(NSURLResponse*, NSData*, NSError*))handler;
+- (void)sendRequest:(NSURLRequest *)request shouldBackground:(BOOL)inShouldBackground completionHandler:(void (^)(NSURLResponse*, NSData*, NSError*))handler
     {
+#if TARGET_OS_IPHONE == 1
     [self.activityManager addNetworkActivity];
+#endif /* TARGET_OS_IPHONE == 1 */
     [self.currentRequests addObject:request];
     
     #if TARGET_OS_IPHONE == 1
@@ -151,7 +162,9 @@ static CNetworkManager *gSharedInstance = NULL;
             }
         #endif /* TARGET_OS_IPHONE == 1 */
 
+#if TARGET_OS_IPHONE == 1
         [self.activityManager removeNetworkActivity];
+#endif /* TARGET_OS_IPHONE == 1 */
         [self.currentRequests removeObject:request];
 
 //        double delayInSeconds = 30.0;
