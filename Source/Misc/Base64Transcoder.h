@@ -35,7 +35,8 @@
 typedef enum {
 	Base64Flags_None = 0x00,
 	Base64Flags_IncludeNewlines = 0x01,
-	Base64Flags_Default = Base64Flags_IncludeNewlines,
+	Base64Flags_IncludeNullByte = 0x02,
+	Base64Flags_Default = Base64Flags_IncludeNewlines | Base64Flags_IncludeNullByte,
 } EBase64Flags;
 
 extern size_t EstimateBas64EncodedDataSize(size_t inDataSize, int32_t inFlags);

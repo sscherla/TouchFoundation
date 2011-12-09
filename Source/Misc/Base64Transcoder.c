@@ -32,6 +32,9 @@
 #include <math.h>
 #include <string.h>
 
+#define kLineWidth 72
+#define kLineWidthWithCRLF 74
+
 const u_int8_t kBase64EncodeTable[64] = {
 	/*  0 */ 'A',	/*  1 */ 'B',	/*  2 */ 'C',	/*  3 */ 'D', 
 	/*  4 */ 'E',	/*  5 */ 'F',	/*  6 */ 'G',	/*  7 */ 'H', 
@@ -105,9 +108,9 @@ const u_int8_t kBits_11111100 = 0xFC;
 
 size_t EstimateBas64EncodedDataSize(size_t inDataSize, int32_t inFlags)
 {
-#pragma unused (inFlags)
 size_t theEncodedDataSize = (int)ceil(inDataSize / 3.0) * 4;
-theEncodedDataSize = theEncodedDataSize / 72 * 74 + theEncodedDataSize % 72 + 1;
+const size_t theLineLength = kLineWidthWithCRLF - (inFlags & Base64Flags_IncludeNewlines ? 2 : 0);
+theEncodedDataSize = theEncodedDataSize / theLineLength * kLineWidthWithCRLF + theEncodedDataSize % theLineLength + (inFlags & Base64Flags_IncludeNullByte ? 1 : 0);;
 return(theEncodedDataSize);
 }
 
@@ -115,7 +118,7 @@ size_t EstimateBas64DecodedDataSize(size_t inDataSize, int32_t inFlags)
 {
 #pragma unused (inFlags)
 size_t theDecodedDataSize = (int)ceil(inDataSize / 4.0) * 3;
-//theDecodedDataSize = theDecodedDataSize / 72 * 74 + theDecodedDataSize % 72;
+//theDecodedDataSize = theDecodedDataSize / kLineWidth * kLineWidthWithCRLF + theDecodedDataSize % kLineWidth;
 return(theDecodedDataSize);
 }
 
@@ -123,7 +126,9 @@ bool Base64EncodeData(const void *inInputData, size_t inInputDataSize, char *out
 {
 size_t theEncodedDataSize = EstimateBas64EncodedDataSize(inInputDataSize, inFlags);
 if (*ioOutputDataSize < theEncodedDataSize)
+    {
 	return(false);
+    }
 *ioOutputDataSize = theEncodedDataSize;
 const u_int8_t *theInPtr = (const u_int8_t *)inInputData;
 u_int32_t theInIndex = 0, theOutIndex = 0;
@@ -133,12 +138,13 @@ for (; theInIndex < (inInputDataSize / 3) * 3; theInIndex += 3)
 	outOutputData[theOutIndex++] = kBase64EncodeTable[(theInPtr[theInIndex] & kBits_00000011) << 4 | (theInPtr[theInIndex + 1] & kBits_11110000) >> 4];
 	outOutputData[theOutIndex++] = kBase64EncodeTable[(theInPtr[theInIndex + 1] & kBits_00001111) << 2 | (theInPtr[theInIndex + 2] & kBits_11000000) >> 6];
 	outOutputData[theOutIndex++] = kBase64EncodeTable[(theInPtr[theInIndex + 2] & kBits_00111111) >> 0];
-	if (inFlags & Base64Flags_IncludeNewlines && theOutIndex % 74 == 72)
+	if (inFlags & Base64Flags_IncludeNewlines && theOutIndex % kLineWidthWithCRLF == kLineWidth)
 		{
 		outOutputData[theOutIndex++] = '\r';
 		outOutputData[theOutIndex++] = '\n';
 		}
 	}
+
 const size_t theRemainingBytes = inInputDataSize - theInIndex;
 if (theRemainingBytes == 1)
 	{
@@ -146,7 +152,7 @@ if (theRemainingBytes == 1)
 	outOutputData[theOutIndex++] = kBase64EncodeTable[(theInPtr[theInIndex] & kBits_00000011) << 4 | (0 & kBits_11110000) >> 4];
 	outOutputData[theOutIndex++] = '=';
 	outOutputData[theOutIndex++] = '=';
-	if (inFlags & Base64Flags_IncludeNewlines && theOutIndex % 74 == 72)
+	if (inFlags & Base64Flags_IncludeNewlines && (theOutIndex % kLineWidthWithCRLF) == kLineWidth)
 		{
 		outOutputData[theOutIndex++] = '\r';
 		outOutputData[theOutIndex++] = '\n';
@@ -158,14 +164,17 @@ else if (theRemainingBytes == 2)
 	outOutputData[theOutIndex++] = kBase64EncodeTable[(theInPtr[theInIndex] & kBits_00000011) << 4 | (theInPtr[theInIndex + 1] & kBits_11110000) >> 4];
 	outOutputData[theOutIndex++] = kBase64EncodeTable[(theInPtr[theInIndex + 1] & kBits_00001111) << 2 | (0 & kBits_11000000) >> 6];
 	outOutputData[theOutIndex++] = '=';
-	if (inFlags & Base64Flags_IncludeNewlines & theOutIndex % 74 == 72)
+	if (inFlags & Base64Flags_IncludeNewlines & theOutIndex % kLineWidthWithCRLF == kLineWidth)
 		{
 		outOutputData[theOutIndex++] = '\r';
 		outOutputData[theOutIndex++] = '\n';
 		}
 	}
-	
-outOutputData[theOutIndex] = 0;
+
+if (inFlags & Base64Flags_IncludeNullByte)
+    {
+    outOutputData[theOutIndex] = 0;
+    }
 
 return(true);
 }
