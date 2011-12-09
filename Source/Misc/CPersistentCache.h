@@ -34,7 +34,9 @@
 @interface CPersistentCache : NSObject
 
 @property (readonly, nonatomic, strong) NSString *name;
-@property (readonly, nonatomic, assign) BOOL diskWritesEnabled;
+@property (readonly, nonatomic, strong) NSString *version;
+@property (readwrite, nonatomic, assign) BOOL diskWritesEnabled;
+@property (readwrite, nonatomic, assign) NSTimeInterval maximumAge;
 
 + (CPersistentCache *)persistentCacheWithName:(NSString *)inName;
 

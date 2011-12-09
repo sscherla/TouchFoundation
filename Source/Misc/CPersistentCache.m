@@ -38,15 +38,29 @@
 #import "NSData_Extensions.h"
 #import "NSData_DigestExtensions.h"
 #import "CTypedData.h"
+#import "NSNumber_Extensions.h"
 
-#define CACHE_VERSION 0
+#define STORE_STATISTICS 1
 
 @interface CPersistentCache ()
 @property (readwrite, nonatomic, strong) NSURL *URL;
+@property (readonly, nonatomic, strong) NSURL *dataDirectoryURL;
+@property (readonly, nonatomic, strong) NSURL *metadataDirectoryURL;
 @property (readwrite, nonatomic, strong) NSValueTransformer *keyTransformer;
 @property (readwrite, nonatomic, strong) NSCache *objectCache;
 @property (readwrite, nonatomic, assign) dispatch_queue_t queue;
+@property (readwrite, nonatomic, assign) id applicationWillTerminateNotification;
+#if STORE_STATISTICS == 1
+@property (readwrite, nonatomic, assign) NSUInteger cacheHits;
+@property (readwrite, nonatomic, assign) NSUInteger cacheMisses;
+@property (readwrite, nonatomic, assign) NSUInteger totalCost;
+#endif /* STORE_STATISTICS == 1 */
 
+- (void)shutdown;
+- (void)setCacheMetadataNeedUpdate;
+- (void)updateCacheMetadata;
+- (void)loadCacheMetadata;
+- (void)purge;
 - (NSDictionary *)metadataForKey:(id)inKey;
 - (NSString *)pathComponentForKey:(id)inKey;
 - (NSURL *)URLForMetadataForKey:(id)inKey;
@@ -57,12 +71,21 @@
 @implementation CPersistentCache
 
 @synthesize name;
+@synthesize version;
 @synthesize diskWritesEnabled;
+@synthesize maximumAge;
 
 @synthesize URL;
 @synthesize keyTransformer;
 @synthesize objectCache;
 @synthesize queue;
+@synthesize applicationWillTerminateNotification;
+
+#if STORE_STATISTICS == 1
+@synthesize cacheHits;
+@synthesize cacheMisses;
+@synthesize totalCost;
+#endif /* STORE_STATISTICS == 1 */
 
 static dispatch_queue_t sQueue = NULL;
 static NSMutableDictionary *sNamedPersistentCaches = NULL;
@@ -94,19 +117,34 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
 		{
         NSParameterAssert(inName.length > 0);
         name = inName;
+        version = @"0";
+        maximumAge = 0;
         diskWritesEnabled = YES;
         keyTransformer = [NSValueTransformer valueTransformerForName:NSKeyedUnarchiveFromDataTransformerName];
         objectCache = [[NSCache alloc] init];
-//        NSString *theQueueName = [NSString stringWithFormat:@"org.touchcode.CPersistentCache.%@", inName];
-//        queue = dispatch_queue_create([theQueueName UTF8String], DISPATCH_QUEUE_SERIAL);
+        #if 1
+        NSString *theQueueName = [NSString stringWithFormat:@"org.touchcode.CPersistentCache.%@", inName];
+        queue = dispatch_queue_create([theQueueName UTF8String], DISPATCH_QUEUE_CONCURRENT);
+        #else
         queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
         dispatch_retain(queue);
+        #endif
+        
+        [self loadCacheMetadata];
+        
+        applicationWillTerminateNotification = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillTerminateNotification object:[UIApplication sharedApplication] queue:NULL usingBlock:^(NSNotification *note) {
+            [self shutdown];
+            }];
+            
+        [self purge];
         }
 	return(self);
 	}
 
 - (void)dealloc
     {
+    [self shutdown];
+    
     dispatch_release(queue);
     queue = NULL;
     }
@@ -117,8 +155,8 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
         {
         NSURL *theURL = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
         theURL = [theURL URLByAppendingPathComponent:@"PersistentCache"];
-        theURL = [theURL URLByAppendingPathComponent:[NSString stringWithFormat:@"V%d", CACHE_VERSION]];
         theURL = [theURL URLByAppendingPathComponent:self.name];
+        theURL = [theURL URLByAppendingPathComponent:self.version];
         if ([[NSFileManager defaultManager] fileExistsAtPath:theURL.path] == NO)
             {
             [[NSFileManager defaultManager] createDirectoryAtPath:theURL.path withIntermediateDirectories:YES attributes:NULL error:NULL];
@@ -126,6 +164,103 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
         URL = theURL;
         }
     return(URL);
+    }
+
+- (NSURL *)dataDirectoryURL
+    {
+    return(self.URL);
+    }
+
+- (NSURL *)metadataDirectoryURL
+    {
+    return(self.URL);
+    }
+
+#pragma mark -
+
+- (void)shutdown
+    {
+    [self purge];
+    
+    [self updateCacheMetadata];
+    }
+
+- (void)setCacheMetadataNeedUpdate
+    {
+    [self updateCacheMetadata];
+    }
+
+- (void)updateCacheMetadata
+    {
+    dispatch_barrier_async(self.queue, ^(void) {
+        NSDictionary *theMetadata = [NSDictionary dictionaryWithObjectsAndKeys:
+#if STORE_STATISTICS == 1
+            NSNumberWithValue(self.cacheHits), @"cacheHits",
+            NSNumberWithValue(self.cacheMisses), @"cacheMisses",
+#endif /* STORE_STATISTICS == 1 */
+            NSNumberWithValue(self.totalCost), @"totalCost",
+            NULL];
+        NSURL *theURL = [self.URL URLByAppendingPathComponent:@"metadata.plist"];
+        [theMetadata writeToURL:theURL atomically:YES];
+        });
+    }
+
+- (void)loadCacheMetadata
+    {
+    dispatch_sync(self.queue, ^(void) {
+        NSURL *theURL = [self.URL URLByAppendingPathComponent:@"metadata.plist"];
+        NSDictionary *theMetadata = [NSDictionary dictionaryWithContentsOfURL:theURL];
+        self.cacheHits = [[theMetadata objectForKey:@"cacheHits"] unsignedIntegerValue];
+        self.cacheMisses = [[theMetadata objectForKey:@"cacheMisses"] unsignedIntegerValue];
+        self.totalCost = [[theMetadata objectForKey:@"totalCost"] unsignedIntegerValue];
+        });
+    }
+
+- (void)purge
+    {
+    dispatch_barrier_sync(self.queue, ^(void) {
+
+        if (self.maximumAge <= 0)
+            {
+            return;
+            }
+
+        NSUInteger thePurgeCount = 0;
+        NSUInteger theNotPurgeCount = 0;
+
+        NSDate *theNow = [NSDate date];
+        
+        NSFileManager *theFileManager = [[NSFileManager alloc] init];
+        NSDirectoryEnumerator *theEnumerator = [theFileManager enumeratorAtURL:self.metadataDirectoryURL includingPropertiesForKeys:NULL options:NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsPackageDescendants | NSDirectoryEnumerationSkipsHiddenFiles errorHandler:NULL];
+        for (NSURL *theMetadataURL in theEnumerator)
+            {
+            if ([[[theMetadataURL.path stringByDeletingPathExtension] pathExtension] isEqualToString:@"metadata"])
+                {
+                NSDictionary *theMetadata = [NSDictionary dictionaryWithContentsOfURL:theMetadataURL];
+                NSDate *theDate = [theMetadata objectForKey:@"created"];
+                if ([theNow timeIntervalSinceDate:theDate] > self.maximumAge)
+                    {
+                    thePurgeCount++;
+
+                    NSURL *theDataURL = [self.dataDirectoryURL URLByAppendingPathComponent:[theMetadata objectForKey:@"href"]];
+                    NSError *theError = NULL;
+                    if ([theFileManager removeItemAtURL:theDataURL error:&theError] == NO)
+                        {
+                        }
+                        
+                    if ([theFileManager removeItemAtURL:theMetadataURL error:&theError] == NO)
+                        {
+                        }
+                    
+                    }
+                else
+                    {
+                    theNotPurgeCount += 1;
+                    }
+                }
+            }
+            
+        });
     }
 
 #pragma mark -
@@ -138,7 +273,7 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
 
 - (NSURL *)URLForMetadataForKey:(id)inKey
     {
-    NSURL *theMetadataURL = [[self.URL URLByAppendingPathComponent:[self pathComponentForKey:inKey]] URLByAppendingPathExtension:@"metadata.plist"];
+    NSURL *theMetadataURL = [[self.metadataDirectoryURL URLByAppendingPathComponent:[self pathComponentForKey:inKey]] URLByAppendingPathExtension:@"metadata.plist"];
     return(theMetadataURL);
     }
 
@@ -166,28 +301,47 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
 
 - (id)objectForKey:(id)inKey
     {
-    id theObject = [self.objectCache objectForKey:inKey];
-    if (theObject == NULL)
-        {
-        NSData *theData = NULL;
-        NSDictionary *theMetadata = [self metadataForKey:inKey];
-        if (theMetadata != NULL)
+    __block id theObject = NULL;
+    
+    dispatch_sync(self.queue, ^(void) {
+    
+        theObject = [self.objectCache objectForKey:inKey];
+        if (theObject != NULL)
             {
-            NSURL *theDataURL = [self.URL URLByAppendingPathComponent:[theMetadata objectForKey:@"href"]];
-            theData = [NSData dataWithContentsOfURL:theDataURL options:NSDataReadingMapped error:NULL];
+            #if STORE_STATISTICS == 1
+            self.cacheHits++;
+            #endif /* STORE_STATISTICS == 1 */
             }
-
-        if (theData)
+        else
             {
-            NSString *theType = [theMetadata objectForKey:@"type"];
-            CTypedData *theTypedData = [[CTypedData alloc] initWithType:theType data:theData metadata:theMetadata];
-            theObject = [theTypedData transformedObject];
+            #if STORE_STATISTICS == 1
+            self.cacheMisses++;
+            #endif /* STORE_STATISTICS == 1 */
 
-            NSUInteger theCost = [theData length];
+            NSData *theData = NULL;
+            NSDictionary *theMetadata = [self metadataForKey:inKey];
+            if (theMetadata != NULL)
+                {
+                NSURL *theDataURL = [self.dataDirectoryURL URLByAppendingPathComponent:[theMetadata objectForKey:@"href"]];
+                theData = [NSData dataWithContentsOfURL:theDataURL options:NSDataReadingMapped error:NULL];
+                }
 
-            [self.objectCache setObject:theObject forKey:inKey cost:theCost];
+            if (theData)
+                {
+                NSString *theType = [theMetadata objectForKey:@"type"];
+                CTypedData *theTypedData = [[CTypedData alloc] initWithType:theType data:theData metadata:theMetadata];
+                theObject = [theTypedData transformedObject];
+
+                NSUInteger theCost = [theData length];
+
+                [self.objectCache setObject:theObject forKey:inKey cost:theCost];
+                }
             }
-        }
+            
+        #if STORE_STATISTICS == 1
+        [self setCacheMetadataNeedUpdate];
+        #endif /* STORE_STATISTICS == 1 */
+        });
 
     return(theObject);
     }
@@ -199,48 +353,42 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
 
 - (void)setObject:(id)inObject forKey:(id)inKey cost:(NSUInteger)inCost
     {
-    CTypedData *theTypedData = [[CTypedData alloc] initByTransformingObject:inObject];
-    NSParameterAssert(theTypedData != NULL);
+    dispatch_barrier_async(self.queue, ^(void) {
+        CTypedData *theTypedData = [[CTypedData alloc] initByTransformingObject:inObject];
+        NSParameterAssert(theTypedData != NULL);
 
-    if (inCost == 0)
-        {
-        inCost = [theTypedData.data length];
-        }
+        const NSUInteger theCost = inCost ?: [theTypedData.data length];
 
+        [self.objectCache setObject:inObject forKey:inKey cost:theCost];
 
-    [self.objectCache setObject:inObject forKey:inKey cost:inCost];
-
-
-    #warning TODO We still want to queue writes. But just pause the queue the writes are on.
-    if (self.diskWritesEnabled == YES)
-        {
-        NSURL *theURL = [self.URL URLByAppendingPathComponent:[self pathComponentForKey:inKey]];
-
-        // Generate the data URL...
-        NSURL *theDataURL = theURL;
-        NSString *theFilenameExtension = (__bridge_transfer NSString *)UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)theTypedData.type, kUTTagClassFilenameExtension);
-        if (theFilenameExtension)
+        if (self.diskWritesEnabled == YES)
             {
-            theDataURL = [theDataURL URLByAppendingPathExtension:theFilenameExtension];
-            }
+            NSURL *theURL = [self.dataDirectoryURL URLByAppendingPathComponent:[self pathComponentForKey:inKey]];
 
-        // Generate the metadata...
-        NSMutableDictionary *theMetadata = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-            [theDataURL lastPathComponent], @"href",
-            [NSNumber numberWithUnsignedInteger:inCost], @"cost",
-            theTypedData.type, @"type",
-            [self.keyTransformer reverseTransformedValue:inKey], @"key",
-#if DEBUG == 1
-            [inKey description], @"key_description",
-#endif
-            NULL];
-        if (theTypedData.metadata != NULL)
-            {
-            [theMetadata addEntriesFromDictionary:theTypedData.metadata];
-            }
-        NSParameterAssert(theTypedData.data != NULL);
+            // Generate the data URL...
+            NSURL *theDataURL = theURL;
+            NSString *theFilenameExtension = (__bridge_transfer NSString *)UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)theTypedData.type, kUTTagClassFilenameExtension);
+            if (theFilenameExtension)
+                {
+                theDataURL = [theDataURL URLByAppendingPathExtension:theFilenameExtension];
+                }
 
-        dispatch_async(self.queue, ^(void) {
+            // Generate the metadata...
+            NSMutableDictionary *theMetadata = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                [theDataURL lastPathComponent], @"href",
+                [NSNumber numberWithUnsignedInteger:theCost], @"cost",
+                theTypedData.type, @"type",
+                [self.keyTransformer reverseTransformedValue:inKey], @"key",
+                [NSDate date], @"created",
+    #if DEBUG == 1
+                [inKey description], @"key_description",
+    #endif
+                NULL];
+            if (theTypedData.metadata != NULL)
+                {
+                [theMetadata addEntriesFromDictionary:theTypedData.metadata];
+                }
+            NSParameterAssert(theTypedData.data != NULL);
 
             NSError *theError = NULL;
             [theTypedData.data writeToURL:theDataURL options:0 error:&theError];
@@ -249,19 +397,23 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
             NSData *theData = [NSPropertyListSerialization dataWithPropertyList:theMetadata format:NSPropertyListBinaryFormat_v1_0 options:0 error:&theError];
             // TODO:error checking.
             [theData writeToURL:[theURL URLByAppendingPathExtension:@"metadata.plist"] options:0 error:&theError];
-            });
-        }
+
+            self.totalCost += theCost;
+            
+            [self setCacheMetadataNeedUpdate];
+            }
+        });
     }
 
 - (void)removeObjectForKey:(id)inKey
     {
-    if ([self.objectCache objectForKey:inKey])
-        {
-        [self.objectCache removeObjectForKey:inKey];
-        }
+    dispatch_barrier_async(self.queue, ^(void) {
 
-    #warning TODO - this needs to happen on the same queue as writes (but needs to be immunue to diskWritesEnabled)
-    dispatch_async(self.queue, ^(void) {
+        if ([self.objectCache objectForKey:inKey])
+            {
+            [self.objectCache removeObjectForKey:inKey];
+            }
+
         NSDictionary *theMetadata = [self metadataForKey:inKey];
         if (theMetadata != NULL)
             {
@@ -270,8 +422,12 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
             NSURL *theMetadataURL = [self URLForMetadataForKey:inKey];
             [[NSFileManager defaultManager] removeItemAtURL:theMetadataURL error:&theError];
 
-            NSURL *theDataURL = [self.URL URLByAppendingPathComponent:[theMetadata objectForKey:@"href"]];
+            NSURL *theDataURL = [self.dataDirectoryURL URLByAppendingPathComponent:[theMetadata objectForKey:@"href"]];
             [[NSFileManager defaultManager] removeItemAtURL:theDataURL error:&theError];
+
+            NSUInteger theCost = [[theMetadata objectForKey:@"cost"] unsignedIntegerValue];
+            self.totalCost -= theCost;
+            [self setCacheMetadataNeedUpdate];
             }
         });
     }
