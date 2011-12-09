@@ -31,12 +31,18 @@
 
 #import <Foundation/Foundation.h>
 
+#import "Base64Transcoder.h"
+
 /**
  * @category NSObject (NSData_Base64Extensions)
  */
 @interface NSData (NSData_Base64Extensions)
 
 + (id)dataWithBase64EncodedString:(NSString *)inString;
+
+- (NSData *)asBase64EncodedData:(NSInteger)inFlags;
+- (NSData *)asBase64EncodedData;
+
 - (NSString *)asBase64EncodedString;
 - (NSString *)asBase64EncodedString:(NSInteger)inFlags;
 
