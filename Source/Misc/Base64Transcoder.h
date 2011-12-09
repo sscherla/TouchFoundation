@@ -31,6 +31,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include <sys/types.h>
 
 typedef enum {
 	Base64Flags_None = 0x00,
@@ -42,6 +43,6 @@ typedef enum {
 extern size_t EstimateBas64EncodedDataSize(size_t inDataSize, int32_t inFlags);
 extern size_t EstimateBas64DecodedDataSize(size_t inDataSize, int32_t inFlags);
 
-extern bool Base64EncodeData(const void *inInputData, size_t inInputDataSize, char *outOutputData, size_t *ioOutputDataSize, int32_t inFlags);
-extern bool Base64DecodeData(const void *inInputData, size_t inInputDataSize, void *ioOutputData, size_t *ioOutputDataSize, int32_t inFlags);
+extern ssize_t Base64EncodeData(const void *inInputData, size_t inInputDataSize, char *outOutputData, size_t *ioOutputDataSize, int32_t inFlags);
+extern ssize_t Base64DecodeData(const void *inInputData, size_t inInputDataSize, void *ioOutputData, size_t *ioOutputDataSize, int32_t inFlags);
 
