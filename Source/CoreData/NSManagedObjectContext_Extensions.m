@@ -87,61 +87,43 @@ NSUInteger theCount = [self countForFetchRequest:theFetchRequest error:outError]
 return(theCount);
 }
 
-- (NSArray *)fetchObjectsOfEntityForName:(NSString *)inEntityName predicate:(NSPredicate *)inPredicate error:(NSError **)outError
-{
-NSEntityDescription *theEntityDescription = [NSEntityDescription entityForName:inEntityName inManagedObjectContext:self];
-NSFetchRequest *theFetchRequest = [[NSFetchRequest alloc] init];
-[theFetchRequest setEntity:theEntityDescription];
-if (inPredicate)
-	[theFetchRequest setPredicate:inPredicate];
-NSArray *theObjects = [self executeFetchRequest:theFetchRequest error:outError];
-return(theObjects);
-}
-
-- (id)fetchObjectOfEntityForName:(NSString *)inEntityName predicate:(NSPredicate *)inPredicate error:(NSError **)outError;
-{
-id theObject = [self fetchObjectOfEntityForName:inEntityName predicate:inPredicate createIfNotFound:NO wasCreated:NULL error:outError];
-return(theObject);
-}
-
-- (id)fetchObjectOfEntityForName:(NSString *)inEntityName predicate:(NSPredicate *)inPredicate createIfNotFound:(BOOL)inCreateIfNotFound wasCreated:(BOOL *)outWasCreated error:(NSError **)outError
+- (NSArray *)fetchObjectsOfEntityForName:(NSString *)inEntityName predicate:(NSPredicate *)inPredicate sortDescriptors:(NSArray *)inSortDescriptors error:(NSError **)outError
     {
-    id theObject = NULL;
-    NSArray *theObjects = [self fetchObjectsOfEntityForName:inEntityName predicate:inPredicate error:outError];
-    BOOL theWasCreatedFlag = NO;
-    if (theObjects)
-        {
-        const NSUInteger theCount = theObjects.count;
-        if (theCount == 0)
-            {
-            if (inCreateIfNotFound == YES)
-                {
-                theObject = [NSEntityDescription insertNewObjectForEntityForName:inEntityName inManagedObjectContext:self];
-                if (theObject)
-                    theWasCreatedFlag = YES;
-                }
-            }
-        else if (theCount == 1)
-            {
-            theObject = [theObjects lastObject];
-            }
-        else
-            {
-            if (outError)
-                {
-                NSDictionary *theUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                    [NSString stringWithFormat:@"Expected 1 object (of type %@) but got %d instead (%@).", inEntityName, theObjects.count, inPredicate], NSLocalizedDescriptionKey,
-                    NULL];
-                
-                *outError = [NSError errorWithDomain:@"TODO_DOMAIN" code:-1 userInfo:theUserInfo];
-                }
-            }
-        }
-    if (theObject && outWasCreated)
-        *outWasCreated = theWasCreatedFlag;
-        
+    NSEntityDescription *theEntityDescription = [NSEntityDescription entityForName:inEntityName inManagedObjectContext:self];
+    NSFetchRequest *theFetchRequest = [[NSFetchRequest alloc] init];
+    theFetchRequest.entity = theEntityDescription;
+    theFetchRequest.sortDescriptors = inSortDescriptors;
+    theFetchRequest.predicate = inPredicate;
+    NSArray *theObjects = [self executeFetchRequest:theFetchRequest error:outError];
+    return(theObjects);
+    }
+
+- (NSArray *)fetchObjectsOfEntityForName:(NSString *)inEntityName predicate:(NSPredicate *)inPredicate error:(NSError **)outError
+    {
+    return([self fetchObjectsOfEntityForName:inEntityName predicate:inPredicate sortDescriptors:NULL error:outError]);
+    }
+
+#pragma mark -
+
+- (id)fetchObjectOfEntityForName:(NSString *)inEntityName predicate:(NSPredicate *)inPredicate sortDescriptors:(NSArray *)inSortDescriptors error:(NSError **)outError
+    {
+    NSEntityDescription *theEntityDescription = [NSEntityDescription entityForName:inEntityName inManagedObjectContext:self];
+    NSFetchRequest *theFetchRequest = [[NSFetchRequest alloc] init];
+    theFetchRequest.entity = theEntityDescription;
+    theFetchRequest.sortDescriptors = inSortDescriptors;
+    theFetchRequest.predicate = inPredicate;
+    theFetchRequest.fetchLimit = 1;
+    NSArray *theObjects = [self executeFetchRequest:theFetchRequest error:outError];
+    id theObject = [theObjects lastObject];
     return(theObject);
     }
+
+- (id)fetchObjectOfEntityForName:(NSString *)inEntityName predicate:(NSPredicate *)inPredicate error:(NSError **)outError
+    {
+    return([self fetchObjectOfEntityForName:inEntityName predicate:inPredicate sortDescriptors:NULL error:outError]);
+    }
+
+#pragma mark -
 
 - (id)fetchObjectOfEntityForName:(NSString *)inEntityName properties:(NSDictionary *)inProperties createIfNotFound:(BOOL)inCreateIfNotFound wasCreated:(BOOL *)outWasCreated error:(NSError **)outError
     {
