@@ -191,6 +191,10 @@
             {
             theObject = [NSKeyedUnarchiver unarchiveObjectWithData:self.data];
             }
+        else if (UTTypeConformsTo((__bridge CFStringRef)self.type, CFSTR("public.json")))
+            {
+            theObject = [NSJSONSerialization JSONObjectWithData:self.data options:0 error:nil];
+            }
         else if (UTTypeConformsTo((__bridge CFStringRef)self.type, kUTTypeText))
             {
             theObject = [[NSString alloc] initWithData:self.data encoding:NSUTF8StringEncoding];
