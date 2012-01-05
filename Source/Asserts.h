@@ -44,7 +44,7 @@
 
 		#define AssertUnimplemented_() Assert_(0, @"Method unimplemented")
 
-		#define AssertCast_(CLS_, OBJ_) ({ \
+		#define AssertCastOld_(CLS_, OBJ_) ({ \
 			id theObject_ = (OBJ_); \
 			if (theObject_ != NULL) \
 				{ \
@@ -52,6 +52,16 @@
 				NSAssert2([theObject_ isKindOfClass:theDesiredClass_], @"Object %@ not of class %@", theObject_, NSStringFromClass(theDesiredClass_)); \
 				} \
 			(CLS_ *)theObject_; \
+			})
+
+		#define AssertCast_(CLS_, OBJ_) ({ \
+			id theObject_ = (OBJ_); \
+			if (theObject_ != NULL) \
+				{ \
+				Class theDesiredClass_ = CLS_; \
+				NSAssert2([theObject_ isKindOfClass:theDesiredClass_], @"Object %@ not of class %@", theObject_, NSStringFromClass(theDesiredClass_)); \
+				} \
+			(id)theObject_; \
 			})
 
 		#define AssertOnMainThread_() Assert_([NSThread isMainThread], @"Should be on main thread");
@@ -64,7 +74,7 @@
 
 		#define AssertUnimplemented_() ((void) 0)
 
-		#define AssertCast_(CLS_, OBJ_) ({ (CLS_ *)(OBJ_); })
+		#define AssertCastOld_(CLS_, OBJ_) ({ (CLS_ *)(OBJ_); })
 
 		#define AssertOnMainThread_() ((void) 0)
 

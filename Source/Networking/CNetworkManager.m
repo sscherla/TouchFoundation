@@ -102,7 +102,7 @@ static CNetworkManager *gSharedInstance = NULL;
     [self.activityManager addNetworkActivity];
 #endif /* TARGET_OS_IPHONE == 1 */
     [self.currentRequests addObject:request];
-    
+
     #if TARGET_OS_IPHONE == 1
     UIBackgroundTaskIdentifier theBackgroundTaskIdentifier = UIBackgroundTaskInvalid;
     if (inShouldBackground)
@@ -117,7 +117,7 @@ static CNetworkManager *gSharedInstance = NULL;
 
         if (error == NULL)
             {
-            NSHTTPURLResponse *theHTTPResponse = AssertCast_(NSHTTPURLResponse, response);
+            NSHTTPURLResponse *theHTTPResponse = AssertCast_([NSHTTPURLResponse class], response);
 
             if (theHTTPResponse.statusCode < 200 || theHTTPResponse.statusCode >= 400)
                 {
