@@ -252,7 +252,7 @@ return(theCount);
             // We only save _if_ we have changes (to prevent notifications from firing)
             if ([self hasChanges] == YES)
                 {
-                NSLog(@"Saving %@", self);
+//                NSLog(@"Saving %@", self);
                 theResult = [self save:outError];
                 }
             }
