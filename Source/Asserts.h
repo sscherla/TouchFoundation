@@ -76,6 +76,8 @@
 
 		#define AssertCastOld_(CLS_, OBJ_) ({ (CLS_ *)(OBJ_); })
 
+		#define AssertCast_(CLS_, OBJ_) ({ (id)(OBJ_); })
+
 		#define AssertOnMainThread_() ((void) 0)
 
 	#endif
