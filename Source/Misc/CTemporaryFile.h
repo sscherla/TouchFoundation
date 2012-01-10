@@ -42,9 +42,6 @@
 @property (readonly, nonatomic, assign) int fileDescriptor;
 @property (readonly, nonatomic, strong) NSFileHandle *fileHandle;
 
-+ (NSString *)temporaryDirectory;
-
-- (void)create;
-- (void)close;
+- (id)initWithPrefix:(NSString *)inPrefix suffix:(NSString *)inSuffix deleteOnDealloc:(BOOL)inDeleteOnDealloc;
 
 @end
