@@ -38,6 +38,9 @@
 @property (readwrite, nonatomic, assign) int fileDescriptor;
 
 + (NSString *)temporaryDirectory;
+
+- (void)create;
+- (void)close;
 @end
 
 #pragma mark -
@@ -65,6 +68,17 @@
         fileDescriptor = -1;
         }
     return(self);
+    }
+
+- (id)initWithPrefix:(NSString *)inPrefix suffix:(NSString *)inSuffix deleteOnDealloc:(BOOL)inDeleteOnDealloc;
+    {
+    if ((self = [self init]) != NULL)
+        {
+        prefix = inPrefix;
+        suffix = inSuffix;
+        deleteOnDealloc = inDeleteOnDealloc;
+        }
+    return self;
     }
 
 - (void)dealloc
@@ -107,7 +121,7 @@
     {
     if (fileHandle == NULL)
         {
-        fileHandle = [[NSFileHandle alloc] initWithFileDescriptor:self.fileDescriptor closeOnDealloc:YES];
+        fileHandle = [[NSFileHandle alloc] initWithFileDescriptor:self.fileDescriptor closeOnDealloc:NO];
         }
     return(fileHandle);
     }
@@ -134,11 +148,15 @@
 	{
 	if (fileHandle != NULL)
 		{
-        [fileHandle synchronizeFile];
-        [fileHandle closeFile];
+        [self.fileHandle synchronizeFile];
+        [self.fileHandle closeFile];
 		}
 	
-    fileDescriptor = -1;
+    if (self.fileDescriptor >= 0)
+        {
+        close(self.fileDescriptor);
+        }
+    self.fileDescriptor = -1;
 	}
 
 @end
