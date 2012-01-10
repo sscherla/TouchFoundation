@@ -31,6 +31,8 @@
 
 #import <Foundation/Foundation.h>
 
+#include <tgmath.h>
+
 typedef enum {
    ImageScaling_Proportionally = 0,
    ImageScaling_ToFit,
@@ -51,26 +53,6 @@ typedef enum {
 
 extern CGRect ScaleAndAlignRectToRect(CGRect inImageRect, CGRect inDestinationRect, EImageScaling inScaling, EImageAlignment inAlignment);
 
-#if CGFLOAT_IS_DOUBLE == 0
-#define cos_ cosf
-#define sin_ sinf
-#define atan_ atanf
-#define abs_ fabsf
-#define pow_ powf
-#define fmod_ fmodf
-#define fabs_ fabsf
-#define sqrt_ sqrtf
-#else
-#define cos_ cos
-#define sin_ sin
-#define atan_ atan
-#define abs_ fabs
-#define pow_ pow
-#define fmod_ fmod
-#define fabs_ fabs
-#define sqrt_ sqrt
-#endif
-
 static inline CGFloat RadiansToDegrees(CGFloat inValue)
 {
 return(inValue * (180.0f / (CGFloat)M_PI));
@@ -83,12 +65,12 @@ return(inValue * ((CGFloat)M_PI / 180.0f));
 
 static inline CGFloat SemicirclesToDegrees(CGFloat inValue)
 {
-return(inValue * (180.0f / pow_(2.0f, 31.0f)));
+return(inValue * (180.0f / pow(2.0f, 31.0f)));
 }
 
 static inline CGFloat DegreesToSemicircles(CGFloat inValue)
 {
-return(inValue * (pow_(2.0f, 31.0f) / 180.0f));
+return(inValue * (pow(2.0f, 31.0f) / 180.0f));
 }
 
 static inline CGFloat SemicirclesToRadians(CGFloat inValue)
@@ -113,8 +95,8 @@ return(inValue * 100.0f / 2.54f / 12.0f);
 
 static inline CGPoint Rotation(CGFloat inAngle, CGFloat inLength)
 {
-CGFloat theCosine = cos_(DegreesToRadians(fmod_(90.0f - inAngle, 360.0f)));
-CGFloat theSine = sin_(DegreesToRadians(fmod_(90.0f - inAngle, 360.0f)));
+CGFloat theCosine = cos(DegreesToRadians(fmod(90.0f - inAngle, 360.0f)));
+CGFloat theSine = sin(DegreesToRadians(fmod(90.0f - inAngle, 360.0f)));
 CGPoint thePoint = {
 	.x = theCosine * inLength,
 	.y = theSine * inLength,
@@ -124,7 +106,7 @@ return(thePoint);
 
 static inline CGRect CGRectFromPoints(CGPoint P1, CGPoint P2)
 {
-CGRect theRect = { .origin = P1, .size = { .width = fabs_(P2.x - P1.x), .height = fabs_(P2.y - P1.y) } };
+CGRect theRect = { .origin = P1, .size = { .width = fabs(P2.x - P1.x), .height = fabs(P2.y - P1.y) } };
 
 theRect.origin.x = MIN(P1.x, P2.x);
 theRect.origin.y = MIN(P1.y, P2.y);
@@ -187,17 +169,17 @@ if (flipped == NO)
 		else if (y == 0.0f)
 			return 90.0f;
 		else
-			return RadiansToDegrees(atan_(x / y));
+			return RadiansToDegrees(atan(x / y));
 		}
 	else if (q == 1)
-		return 180.0f + RadiansToDegrees(atan_(x / y));
+		return 180.0f + RadiansToDegrees(atan(x / y));
 	else if (q == 2)
-		return 180.0f + RadiansToDegrees(atan_(x / y));
+		return 180.0f + RadiansToDegrees(atan(x / y));
 	else
 		{
 		if (x == 0.0f)
 			return 0.0f;
-		return 360.0f + RadiansToDegrees(atan_(x / y));
+		return 360.0f + RadiansToDegrees(atan(x / y));
 		}
 	}
 else
@@ -207,17 +189,17 @@ else
 		{
 		if (y == 0.0f)
 			return 90.0f;
-		return 90.0f + RadiansToDegrees(atan_(y / x));
+		return 90.0f + RadiansToDegrees(atan(y / x));
 		}
 	else if (q == 1)
-		return 90.0f + RadiansToDegrees(atan_(y / x));
+		return 90.0f + RadiansToDegrees(atan(y / x));
 	else if (q == 2)
-		return 270.0f + RadiansToDegrees(atan_(y / x));
+		return 270.0f + RadiansToDegrees(atan(y / x));
 	else
 		{
 		if (x == 0.0f)
 			return 0.0f;
-		return 270.0f + RadiansToDegrees(atan_(y / x));
+		return 270.0f + RadiansToDegrees(atan(y / x));
 		}
 	}
 }
@@ -292,13 +274,13 @@ static inline CGPoint CGCenterRect(CGRect inRect)
 
 static inline CGFloat distance(CGPoint start, CGPoint finish)
 {
-const CGFloat theDistance = sqrt_(pow_(fabs_(start.x - finish.x), 2.0f) + pow_(abs_(start.y - finish.y), 2.0f));
+const CGFloat theDistance = sqrt(pow(fabs(start.x - finish.x), 2.0f) + pow(abs(start.y - finish.y), 2.0f));
 return(theDistance);
 }
 
 static inline CGFloat magnitude(CGPoint point)
 {
-const CGFloat theMagnitude = sqrt_(fabs_(point.x * point.x) + fabs_(point.y * point.y));
+const CGFloat theMagnitude = sqrt(fabs(point.x * point.x) + fabs(point.y * point.y));
 return(theMagnitude);
 }
 
