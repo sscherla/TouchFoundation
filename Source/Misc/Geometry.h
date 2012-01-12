@@ -274,7 +274,7 @@ static inline CGPoint CGCenterRect(CGRect inRect)
 
 static inline CGFloat distance(CGPoint start, CGPoint finish)
 {
-const CGFloat theDistance = sqrt(pow(fabs(start.x - finish.x), 2.0f) + pow(abs(start.y - finish.y), 2.0f));
+const CGFloat theDistance = sqrt(pow(fabs(start.x - finish.x), 2.0f) + pow(fabs(start.y - finish.y), 2.0f));
 return(theDistance);
 }
 
