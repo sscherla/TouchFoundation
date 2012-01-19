@@ -87,9 +87,10 @@ static void *KVO;
 - (id)addOneShotKVOBlockForKeyPath:(NSString *)inKeyPath options:(NSKeyValueObservingOptions)inOptions handler:(KVOBlock)inHandler
     {
     __block id theToken = NULL;
+    __weak NSObject *_self = self;
     KVOBlock theBlock = ^(NSString *keyPath, id object, NSDictionary *change) {
         inHandler(keyPath, object, change);
-        [self removeKVOBlockForToken:theToken];
+        [_self removeKVOBlockForToken:theToken];
         };
 
     theToken = [self addKVOBlockForKeyPath:inKeyPath options:inOptions handler:theBlock];
@@ -99,9 +100,10 @@ static void *KVO;
 - (id)addOneShotKVOBlockForKeyPath:(NSString *)inKeyPath options:(NSKeyValueObservingOptions)inOptions identifier:(NSString *)inIdentifier handler:(KVOBlock)inHandler
     {
     __block id theToken = NULL;
+    __weak NSObject *_self = self;
     KVOBlock theBlock = ^(NSString *keyPath, id object, NSDictionary *change) {
         inHandler(keyPath, object, change);
-        [self removeKVOBlockForToken:theToken];
+        [_self removeKVOBlockForToken:theToken];
         };
 
     theToken = [self addKVOBlockForKeyPath:inKeyPath options:inOptions identifier:inIdentifier handler:theBlock];

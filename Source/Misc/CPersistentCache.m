@@ -133,8 +133,9 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
         [self loadCacheMetadata];
         
         #if TARGET_OS_IPHONE == 1
+        __weak CPersistentCache *_self = self;
         applicationWillTerminateNotification = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillTerminateNotification object:[UIApplication sharedApplication] queue:NULL usingBlock:^(NSNotification *note) {
-            [self shutdown];
+            [_self shutdown];
             }];
         #endif /* TARGET_OS_IPHONE == 1 */
             

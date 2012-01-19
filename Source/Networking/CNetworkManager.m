@@ -111,6 +111,7 @@ static CNetworkManager *gSharedInstance = NULL;
         }
     #endif /* TARGET_OS_IPHONE == 1 */
 
+    __weak CNetworkManager *_self = self;
     [NSURLConnection sendAsynchronousRequest:request queue:self.operationQueue completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
 
         BOOL theHandledFlag = NO;
@@ -163,9 +164,9 @@ static CNetworkManager *gSharedInstance = NULL;
         #endif /* TARGET_OS_IPHONE == 1 */
 
 #if TARGET_OS_IPHONE == 1
-        [self.activityManager removeNetworkActivity];
+        [_self.activityManager removeNetworkActivity];
 #endif /* TARGET_OS_IPHONE == 1 */
-        [self.currentRequests removeObject:request];
+        [_self.currentRequests removeObject:request];
 
 //        double delayInSeconds = 30.0;
 //        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (dispatch_time_t)(delayInSeconds * NSEC_PER_SEC));
