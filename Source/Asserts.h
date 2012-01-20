@@ -36,11 +36,11 @@
 	#endif
 
 	#if DEBUG == 1
-		#define Assert_(test, ...) NSAssert((test), [NSString stringWithFormat:__VA_ARGS__])
+		#define Assert_ NSAssert
 
-		#define AssertC_(test, ...) NSAssertC((test), [NSString stringWithFormat:__VA_ARGS__])
+		#define AssertC_ NSCAssert
 
-		#define AssertParameter_(test) NSParameterAssert((test))
+		#define AssertParameter_ NSParameterAssert
 
 		#define AssertUnimplemented_() Assert_(0, @"Method unimplemented")
 
