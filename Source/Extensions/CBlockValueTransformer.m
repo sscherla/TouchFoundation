@@ -70,3 +70,16 @@
     }
 
 @end
+
+#pragma mark -
+
+@implementation NSValueTransformer (NSValueTransformer_BlockExtensions)
+
++ (void)setValueTransformerForName:(NSString *)inName block:(id (^)(id))inBlock;
+    {
+    CBlockValueTransformer *theTransformer = [[CBlockValueTransformer alloc] initWithBlock:inBlock];
+    [self setValueTransformer:theTransformer forName:inName];
+    }
+
+@end
+

@@ -37,3 +37,11 @@
 - (id)initWithBlock:(id (^)(id))inBlock;
 
 @end
+
+#pragma mark -
+
+@interface NSValueTransformer (NSValueTransformer_BlockExtensions)
+
++ (void)setValueTransformerForName:(NSString *)inName block:(id (^)(id))inBlock;
+
+@end
