@@ -32,10 +32,13 @@
 #ifdef __OBJC__
 
 	#if !defined(DEBUG) || DEBUG == 0
-		#define NS_BLOCK_ASSERTIONS 1
-	#endif
+    #define ASSERTS 0
+    #define NS_BLOCK_ASSERTIONS 1
+    #else
+    #define ASSERTS 1
+    #endif
 
-	#if DEBUG == 1
+	#if ASSERTS == 1
 		#define Assert_ NSAssert
 
 		#define AssertC_ NSCAssert
