@@ -118,35 +118,37 @@ static CNetworkManager *gSharedInstance = NULL;
 
         if (error == NULL)
             {
-            NSHTTPURLResponse *theHTTPResponse = AssertCast_([NSHTTPURLResponse class], response);
-
-            if (theHTTPResponse.statusCode < 200 || theHTTPResponse.statusCode >= 400)
+            if ([response isKindOfClass:[NSHTTPURLResponse class]])
                 {
-                NSMutableDictionary *theUserInfo = [NSMutableDictionary dictionary];
-                if (request != NULL)
+                NSHTTPURLResponse *theHTTPResponse = AssertCast_([NSHTTPURLResponse class], response);
+
+                if (theHTTPResponse.statusCode < 200 || theHTTPResponse.statusCode >= 400)
                     {
-                    [theUserInfo setObject:request forKey:@"request"];
-                    }
-                if (response != NULL)
-                    {
+                    NSMutableDictionary *theUserInfo = [NSMutableDictionary dictionary];
+                    if (request != NULL)
+                        {
+                        [theUserInfo setObject:request forKey:@"request"];
+                        }
+                    if (response != NULL)
+                        {
+                        [theUserInfo setObject:response forKey:@"response"];
+                        }
+                    if (data != NULL)
+                        {
+                        NSString *theContentType = [[theHTTPResponse allHeaderFields] objectForKey:@"Content-Type"];
+
+                        CTypedData *theTypedData = [[CTypedData alloc] initWithContentType:theContentType data:data];
+                        [theUserInfo setObject:theTypedData forKey:@"typedData"];
+                        }
                     [theUserInfo setObject:response forKey:@"response"];
+
+
+                    NSError *theError = [NSError errorWithDomain:@"HTTP_DOMAIN" code:theHTTPResponse.statusCode userInfo:theUserInfo];
+
+                    handler(NULL, NULL, theError);
+                    theHandledFlag = YES;
                     }
-                if (data != NULL)
-                    {
-                    NSString *theContentType = [[theHTTPResponse allHeaderFields] objectForKey:@"Content-Type"];
-
-                    CTypedData *theTypedData = [[CTypedData alloc] initWithContentType:theContentType data:data];
-                    [theUserInfo setObject:theTypedData forKey:@"typedData"];
-                    }
-                [theUserInfo setObject:response forKey:@"response"];
-
-
-                NSError *theError = [NSError errorWithDomain:@"HTTP_DOMAIN" code:theHTTPResponse.statusCode userInfo:theUserInfo];
-
-                handler(NULL, NULL, theError);
-                theHandledFlag = YES;
                 }
-
             }
 
         if (theHandledFlag == NO)
