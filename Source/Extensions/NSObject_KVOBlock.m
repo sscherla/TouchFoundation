@@ -87,10 +87,9 @@ static void *KVO;
 - (id)addOneShotKVOBlockForKeyPath:(NSString *)inKeyPath options:(NSKeyValueObservingOptions)inOptions handler:(KVOBlock)inHandler
     {
     __block id theToken = NULL;
-    __weak NSObject *_self = self;
     KVOBlock theBlock = ^(NSString *keyPath, id object, NSDictionary *change) {
         inHandler(keyPath, object, change);
-        [_self removeKVOBlockForToken:theToken];
+        [self removeKVOBlockForToken:theToken];
         };
 
     theToken = [self addKVOBlockForKeyPath:inKeyPath options:inOptions handler:theBlock];
@@ -100,10 +99,9 @@ static void *KVO;
 - (id)addOneShotKVOBlockForKeyPath:(NSString *)inKeyPath options:(NSKeyValueObservingOptions)inOptions identifier:(NSString *)inIdentifier handler:(KVOBlock)inHandler
     {
     __block id theToken = NULL;
-    __weak NSObject *_self = self;
     KVOBlock theBlock = ^(NSString *keyPath, id object, NSDictionary *change) {
         inHandler(keyPath, object, change);
-        [_self removeKVOBlockForToken:theToken];
+        [self removeKVOBlockForToken:theToken];
         };
 
     theToken = [self addKVOBlockForKeyPath:inKeyPath options:inOptions identifier:inIdentifier handler:theBlock];
@@ -116,11 +114,8 @@ static void *KVO;
 
     if (theHelper == NULL)
         {
-        NSLog(@"KVOBlock never registered?");
         return;
         }
-
-    NSAssert(theHelper != NULL, @"KVOBlock never registered");
 
     void *theContext = (__bridge void *)[theHelper canonicalKeyForKey:inToken];
     NSString *theKeyPath = [theHelper keypathForKey:inToken];
@@ -172,7 +167,7 @@ static void *KVO;
     CKVOBlockHelper *theHelper = objc_getAssociatedObject(inObject, &KVO);
     if (theHelper == NULL && inCreate == YES)
         {
-        theHelper = [[CKVOBlockHelper alloc] initWithObject:self];
+        theHelper = [[CKVOBlockHelper alloc] initWithObject:inObject];
 
         objc_setAssociatedObject(inObject, &KVO, theHelper, OBJC_ASSOCIATION_RETAIN);
         }
