@@ -328,6 +328,20 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
                 {
                 NSURL *theDataURL = [self.dataDirectoryURL URLByAppendingPathComponent:[theMetadata objectForKey:@"href"]];
                 theData = [NSData dataWithContentsOfURL:theDataURL options:NSDataReadingMapped error:NULL];
+                
+                if (self.diskWritesEnabled == YES)
+                    {
+                    dispatch_barrier_async(self.queue, ^(void) {
+                        NSMutableDictionary *theMutableMetadata = [theMetadata mutableCopy];
+                        [theMutableMetadata setObject:[NSDate date] forKey:@"accessed"];
+                        NSUInteger theAccessCount = [[theMutableMetadata objectForKey:@"accessCount"] unsignedIntegerValue];
+                        [theMutableMetadata setObject:[NSNumber numberWithUnsignedLong:theAccessCount + 1] forKey:@"accessCount"];
+                        NSError *theError = NULL;
+                        NSData *theData = [NSPropertyListSerialization dataWithPropertyList:theMutableMetadata format:NSPropertyListBinaryFormat_v1_0 options:0 error:&theError];
+                        [theError log:@"CPersistentCache: Converting metadata to binary plist"];
+                        [theData writeToURL:[self URLForMetadataForKey:inKey] options:0 error:&theError];
+                        });
+                    }
                 }
 
             if (theData)
@@ -377,13 +391,16 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
                 theDataURL = [theDataURL URLByAppendingPathExtension:theFilenameExtension];
                 }
 
+            NSDate *theDateNow = [NSDate date];
+
             // Generate the metadata...
             NSMutableDictionary *theMetadata = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                 [theDataURL lastPathComponent], @"href",
                 [NSNumber numberWithUnsignedInteger:theCost], @"cost",
                 theTypedData.type, @"type",
                 [self.keyTransformer reverseTransformedValue:inKey], @"key",
-                [NSDate date], @"created",
+                theDateNow, @"created",
+                theDateNow, @"accessed",
     #if DEBUG == 1
                 [inKey description], @"key_description",
     #endif
@@ -396,10 +413,10 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
 
             NSError *theError = NULL;
             [theTypedData.data writeToURL:theDataURL options:0 error:&theError];
-            // TODO:error checking.
+            [theError log:@"CPersistentCache: Writing cache data to disk"];
 
             NSData *theData = [NSPropertyListSerialization dataWithPropertyList:theMetadata format:NSPropertyListBinaryFormat_v1_0 options:0 error:&theError];
-            // TODO:error checking.
+            [theError log:@"CPersistentCache: Converting metadata to binary plist"];
             [theData writeToURL:[theURL URLByAppendingPathExtension:@"metadata.plist"] options:0 error:&theError];
 
             self.totalCost += theCost;
