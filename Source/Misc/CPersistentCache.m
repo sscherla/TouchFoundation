@@ -138,8 +138,6 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
             [_self shutdown];
             }];
         #endif /* TARGET_OS_IPHONE == 1 */
-            
-        [self purge];
         }
 	return(self);
 	}
@@ -240,7 +238,7 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
             if ([[[theMetadataURL.path stringByDeletingPathExtension] pathExtension] isEqualToString:@"metadata"])
                 {
                 NSDictionary *theMetadata = [NSDictionary dictionaryWithContentsOfURL:theMetadataURL];
-                NSDate *theDate = [theMetadata objectForKey:@"created"];
+                NSDate *theDate = [theMetadata objectForKey:@"accessed"];
                 if ([theNow timeIntervalSinceDate:theDate] > self.maximumAge)
                     {
                     thePurgeCount++;

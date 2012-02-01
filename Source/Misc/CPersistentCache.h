@@ -41,6 +41,7 @@
 + (CPersistentCache *)persistentCacheWithName:(NSString *)inName;
 
 - (id)initWithName:(NSString *)inName;
+- (void)purge;
 
 - (BOOL)containsObjectForKey:(id)inKey;
 - (id)objectForKey:(id)inKey;
