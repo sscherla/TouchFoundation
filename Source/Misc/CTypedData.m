@@ -102,6 +102,14 @@
     return self;
     }
 
+- (CTypedData *)typedDataByAddingMetadata:(NSDictionary *)inMetadata;
+    {
+    NSMutableDictionary *theMetadata = [self.metadata mutableCopy] ?: [NSMutableDictionary dictionary];
+    [theMetadata addEntriesFromDictionary:inMetadata];
+    CTypedData *theData = [[CTypedData alloc] initWithType:self.type data:self.data metadata:theMetadata];
+    return(theData);
+    }
+
 @end
 
 #pragma mark -

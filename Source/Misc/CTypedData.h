@@ -40,6 +40,8 @@
 - (id)initWithType:(NSString *)inType data:(NSData *)inData metadata:(NSDictionary *)inMetadata;
 - (id)initWithType:(NSString *)inType data:(NSData *)inData;
 
+- (CTypedData *)typedDataByAddingMetadata:(NSDictionary *)inMetadata;
+
 @end
 
 #pragma mark -
