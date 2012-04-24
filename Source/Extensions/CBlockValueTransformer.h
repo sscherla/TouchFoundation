@@ -43,5 +43,6 @@
 @interface NSValueTransformer (NSValueTransformer_BlockExtensions)
 
 + (void)setValueTransformerForName:(NSString *)inName block:(id (^)(id))inBlock;
++ (void)setValueTransformerForName:(NSString *)inName block:(id (^)(id))inBlock reverseBlock:(id (^)(id))inReverseBlock;
 
 @end

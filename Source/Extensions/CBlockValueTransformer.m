@@ -81,5 +81,11 @@
     [self setValueTransformer:theTransformer forName:inName];
     }
 
++ (void)setValueTransformerForName:(NSString *)inName block:(id (^)(id))inBlock reverseBlock:(id (^)(id))inReverseBlock
+    {
+    CBlockValueTransformer *theTransformer = [[CBlockValueTransformer alloc] initWithBlock:inBlock reverseBlock:inReverseBlock];
+    [self setValueTransformer:theTransformer forName:inName];
+    }
+
 @end
 
