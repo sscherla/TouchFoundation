@@ -65,7 +65,7 @@
 
 - (NSString *)description
     {
-    return([NSString stringWithFormat:@"%@ (type: %@, length: %d)", [super description], NSStringFromClass([self.storage class]), self.length]);
+    return([NSString stringWithFormat:@"%@ (type: %@, length: %d)", [super description], NSStringFromClass([self.storage class]), (uint32_t)self.length]);
     }
 
 - (NSMutableData *)dataStorage

@@ -131,7 +131,7 @@ return(theScaledImageRect);
 
 NSString *NSStringFromCIntegerPoint(CIntegerPoint inPoint)
 {
-return([NSString stringWithFormat:@"%d,%d", inPoint.x, inPoint.y]);
+return([NSString stringWithFormat:@"%lld,%lldd", (int64_t)inPoint.x, (int64_t)inPoint.y]);
 }
 
 extern CIntegerPoint CIntegerPointFromString(NSString *inString)

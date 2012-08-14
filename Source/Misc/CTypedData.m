@@ -76,11 +76,11 @@
             theDataString = [NSString stringWithFormat:@"%@…", [theDataString substringToIndex:100]];
             }
         
-        return([NSString stringWithFormat:@"%@ (type: %@, data: %@ (%d bytes), metadata: %@)", [super description], self.type, theDataString, self.data.length, self.metadata]);
+        return([NSString stringWithFormat:@"%@ (type: %@, data: %@ (%lld bytes), metadata: %@)", [super description], self.type, theDataString, (int64_t)self.data.length, self.metadata]);
         }
     else
         {
-        return([NSString stringWithFormat:@"%@ (type: %@, data: %d bytes, metadata: %@)", [super description], self.type, self.data.length, self.metadata]);
+        return([NSString stringWithFormat:@"%@ (type: %@, data: %lld bytes, metadata: %@)", [super description], self.type, (int64_t)self.data.length, self.metadata]);
         }
     }
 

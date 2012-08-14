@@ -55,8 +55,4 @@
 
 - (BOOL)scanNumber:(NSNumber **)outNumber;
 
-- (BOOL)scanAtMost:(NSUInteger)N charactersFromSet:(NSCharacterSet *)set intoString:(NSString **)value;
-
-- (BOOL)scanStringWithinParentheses:(NSString **)outString;
-
 @end

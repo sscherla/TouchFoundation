@@ -150,11 +150,11 @@
         
         if (self.flags & HumanDateFormatterFlags_Mini)
             {
-            [theComponents addObject:[NSString stringWithFormat:@"%d%@", theDeltaInUnits, theUnitString]];
+            [theComponents addObject:[NSString stringWithFormat:@"%lld%@", (int64_t)theDeltaInUnits, theUnitString]];
             }
         else
             {
-            [theComponents addObject:[NSString stringWithFormat:@"%d %@%@", labs(theDeltaInUnits), theUnitString, theDeltaInUnits > 0 ? @" ago" : @""]];
+            [theComponents addObject:[NSString stringWithFormat:@"%ld %@%@", labs(theDeltaInUnits), theUnitString, theDeltaInUnits > 0 ? @" ago" : @""]];
             }
         }
 

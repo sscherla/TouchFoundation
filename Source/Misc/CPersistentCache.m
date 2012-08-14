@@ -48,7 +48,7 @@
 @property (readonly, nonatomic, strong) NSURL *metadataDirectoryURL;
 @property (readwrite, nonatomic, strong) NSValueTransformer *keyTransformer;
 @property (readwrite, nonatomic, strong) NSCache *objectCache;
-@property (readwrite, nonatomic, assign) dispatch_queue_t queue;
+@property (readwrite, nonatomic, strong) dispatch_queue_t queue;
 @property (readwrite, nonatomic, assign) id applicationWillTerminateNotification;
 #if STORE_STATISTICS == 1
 @property (readwrite, nonatomic, assign) NSUInteger cacheHits;
@@ -141,14 +141,6 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
         }
 	return(self);
 	}
-
-- (void)dealloc
-    {
-    [self shutdown];
-    
-    dispatch_release(queue);
-    queue = NULL;
-    }
 
 - (NSURL *)URL
     {
@@ -336,7 +328,7 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
                         [theMutableMetadata setObject:[NSNumber numberWithUnsignedLong:theAccessCount + 1] forKey:@"accessCount"];
                         NSError *theError = NULL;
                         NSData *theData = [NSPropertyListSerialization dataWithPropertyList:theMutableMetadata format:NSPropertyListBinaryFormat_v1_0 options:0 error:&theError];
-                        [theError log:@"CPersistentCache: Converting metadata to binary plist"];
+                        NSLog(@"CPersistentCache: Converting metadata to binary plist");
                         [theData writeToURL:[self URLForMetadataForKey:inKey] options:0 error:&theError];
                         });
                     }
@@ -411,10 +403,10 @@ static NSMutableDictionary *sNamedPersistentCaches = NULL;
 
             NSError *theError = NULL;
             [theTypedData.data writeToURL:theDataURL options:0 error:&theError];
-            [theError log:@"CPersistentCache: Writing cache data to disk"];
+            NSLog(@"CPersistentCache: Writing cache data to disk");
 
             NSData *theData = [NSPropertyListSerialization dataWithPropertyList:theMetadata format:NSPropertyListBinaryFormat_v1_0 options:0 error:&theError];
-            [theError log:@"CPersistentCache: Converting metadata to binary plist"];
+            NSLog(@"CPersistentCache: Converting metadata to binary plist");
             [theData writeToURL:[theURL URLByAppendingPathExtension:@"metadata.plist"] options:0 error:&theError];
 
             self.totalCost += theCost;

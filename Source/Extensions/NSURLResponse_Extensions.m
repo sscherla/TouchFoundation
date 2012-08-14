@@ -95,7 +95,7 @@ NSMutableArray *theComponents = [NSMutableArray array];
 
 [theComponents addObject:[NSString stringWithFormat:@"URL: %@", [self URL]]];
 [theComponents addObject:[NSString stringWithFormat:@"MIMEType: %@", [self MIMEType]]];
-[theComponents addObject:[NSString stringWithFormat:@"statusCode: %d", [self statusCode]]];
+[theComponents addObject:[NSString stringWithFormat:@"statusCode: %d", (int)[self statusCode]]];
 [theComponents addObject:[NSString stringWithFormat:@"Headers: %@", [self allHeaderFields]]];
 
 

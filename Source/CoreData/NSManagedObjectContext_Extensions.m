@@ -42,7 +42,7 @@ static void *kDebugNameKey;
 
 - (NSString *)description
     {
-    return([NSString stringWithFormat:@"%@ (\"%@\", inserted: %d, updated: %d, deleted: %d)", [super description], self.debugNamePath, [self insertedObjects].count, [self updatedObjects].count, [self deletedObjects].count]);
+    return([NSString stringWithFormat:@"%@ (\"%@\", inserted: %lld, updated: %lld, deleted: %lld)", [super description], self.debugNamePath, (int64_t)[self insertedObjects].count, (int64_t)[self updatedObjects].count, (int64_t)[self deletedObjects].count]);
     }
 
 - (NSString *)debugName
@@ -175,7 +175,7 @@ return(theCount);
             if (outError)
                 {
                 NSDictionary *theUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                    [NSString stringWithFormat:@"Expected 1 object (of type %@) but got %d instead.", inEntityName, theObjects.count], NSLocalizedDescriptionKey,
+                    [NSString stringWithFormat:@"Expected 1 object (of type %@) but got %lld instead.", inEntityName, (int64_t)theObjects.count], NSLocalizedDescriptionKey,
                     NULL];
                 
                 *outError = [NSError errorWithDomain:@"TODO_DOMAIN" code:-1 userInfo:theUserInfo];
