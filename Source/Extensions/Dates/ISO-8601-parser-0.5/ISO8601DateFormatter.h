@@ -36,6 +36,11 @@ extern unichar ISO8601DefaultTimeSeparatorCharacter;
 
 @interface ISO8601DateFormatter: NSFormatter
 {
+	NSString *lastUsedFormatString;
+	NSDateFormatter *unparsingFormatter;
+
+	NSCalendar *parsingCalendar, *unparsingCalendar;
+
 	NSTimeZone *defaultTimeZone;
 	ISO8601DateFormat format;
 	unichar timeSeparator;
@@ -43,13 +48,13 @@ extern unichar ISO8601DefaultTimeSeparatorCharacter;
 	BOOL parsesStrictly;
 }
 
-@property(retain, nonatomic) NSTimeZone *defaultTimeZone;
+@property(nonatomic, retain) NSTimeZone *defaultTimeZone;
 
 #pragma mark Parsing
 
 //As a formatter, this object converts strings to dates.
 
-@property (readwrite, nonatomic, assign) BOOL parsesStrictly;
+@property BOOL parsesStrictly;
 
 - (NSDateComponents *) dateComponentsFromString:(NSString *)string;
 - (NSDateComponents *) dateComponentsFromString:(NSString *)string timeZone:(out NSTimeZone **)outTimeZone;
@@ -61,9 +66,9 @@ extern unichar ISO8601DefaultTimeSeparatorCharacter;
 
 #pragma mark Unparsing
 
-@property (nonatomic) ISO8601DateFormat format;
-@property (nonatomic) BOOL includeTime;
-@property (nonatomic) unichar timeSeparator;
+@property ISO8601DateFormat format;
+@property BOOL includeTime;
+@property unichar timeSeparator;
 
 - (NSString *) stringFromDate:(NSDate *)date;
 - (NSString *) stringFromDate:(NSDate *)date timeZone:(NSTimeZone *)timeZone;
