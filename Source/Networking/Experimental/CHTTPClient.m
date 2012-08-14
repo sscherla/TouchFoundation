@@ -36,12 +36,12 @@
 
 @interface CHTTPClient ()
 @property (readwrite, nonatomic, strong) NSURLRequest *request;
-@property (readwrite, nonatomic, assign) CFReadStreamRef readStream;
+@property (readwrite, nonatomic, strong) __attribute__((NSObject)) CFReadStreamRef readStream;
 @property (readwrite, nonatomic, strong) NSMutableData *initialBuffer;
 @property (readwrite, nonatomic, strong) NSMutableData *buffer;
 @property (readwrite, nonatomic, strong) CTemporaryData *data;
-@property (readwrite, nonatomic, assign) CFHTTPMessageRef requestMessage;
-@property (readwrite, nonatomic, assign) CFHTTPMessageRef responseMessage;
+@property (readwrite, nonatomic, strong) __attribute__((NSObject)) CFHTTPMessageRef requestMessage;
+@property (readwrite, nonatomic, strong) __attribute__((NSObject)) CFHTTPMessageRef responseMessage;
 
 - (void)open;
 - (void)process;
@@ -55,58 +55,28 @@
 
 @implementation CHTTPClient
 
-@synthesize request;
-@synthesize readStream;
-@synthesize initialBufferLength;
-@synthesize initialBuffer;
-@synthesize bufferLength;
-@synthesize buffer;
-@synthesize data;
-@synthesize requestMessage;
-@synthesize responseMessage;
-@synthesize delegate;
+@synthesize data = _data;
 
 - (id)initWithRequest:(NSURLRequest *)inRequest
     {
     if ((self = [super init]) != NULL)
         {
-        request = inRequest;
-        initialBufferLength = 32 * 1024;
-        bufferLength = 32 * 1024;
+        _request = inRequest;
+        _initialBufferLength = 32 * 1024;
+        _bufferLength = 32 * 1024;
         }
     return(self);
-    }
-
-- (void)dealloc
-    {
-    if (readStream)
-        {
-        CFRelease(readStream);
-        readStream = NULL;
-        }
-
-    if (requestMessage)
-        {
-        CFRelease(requestMessage);
-        requestMessage = NULL;
-        }
-
-    if (responseMessage)
-        {
-        CFRelease(responseMessage);
-        responseMessage = NULL;
-        }
     }
 
 #pragma mark -
 
 - (CTemporaryData *)data
     {
-    if (data == NULL)
+    if (_data == NULL)
         {
-        data = [[CTemporaryData alloc] initWithMemoryLimit:8 * 1024 * 1024];
+        _data = [[CTemporaryData alloc] initWithMemoryLimit:8 * 1024 * 1024];
         }
-    return(data);
+    return(_data);
     }
 
 #pragma mark -
@@ -202,9 +172,9 @@
     {
 	NSLog(@"CLOSE");
 
-    if (readStream)
+    if (_readStream)
         {
-        CFReadStreamClose(readStream);
+        CFReadStreamClose(self.readStream);
         }
 
 	if (self.delegate && [self.delegate respondsToSelector:@selector(httpClientDidFinishLoading:)])

@@ -35,8 +35,7 @@
 
 @protocol CHTTPClientDelegate;
 
-@interface CHTTPClient : NSObject {
-}
+@interface CHTTPClient : NSObject
 
 @property (readwrite, nonatomic, assign) NSUInteger initialBufferLength;
 @property (readwrite, nonatomic, assign) NSUInteger bufferLength;
