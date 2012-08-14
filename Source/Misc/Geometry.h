@@ -122,10 +122,12 @@ return(theRect);
 
 static inline int quadrant(CGFloat x, CGFloat y)
 {
+// TODO - this really needs unit testing...
 #if TARGET_OS_IPHONE == 0
-#warning FIX THIS FOR NON IPHONE
+const BOOL flipped = NO;
+#else
+const BOOL flipped = YES;
 #endif /* TARGET_OS_IPHONE == 0 */
-BOOL flipped = YES;
 if (flipped == NO)
 	{
 	if (x >= 0)
