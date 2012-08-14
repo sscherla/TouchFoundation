@@ -1,9 +1,9 @@
 //
 //  CTypedData_JSONExtensions.h
-//  knotes
+//  //  TouchFoundation
 //
 //  Created by Jonathan Wight on 10/10/11.
-//  Copyright (c) 2011 knotes. All rights reserved.
+//  Copyright (c) 2011 Jonathan Wight. All rights reserved.
 //
 
 #import "CTypedData.h"
