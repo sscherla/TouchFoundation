@@ -19,7 +19,9 @@
 @property (readonly, nonatomic, strong) Class managedObjectContextClass;
 @property (readonly, nonatomic, strong) NSManagedObjectContext *managedObjectContext;
 
-- (id)initWithModelURL:(NSURL *)inModelURL PersistentStoreURL:(NSURL *)inPersistentStoreURL;
+- (id)initWithApplicationDefaults;
+
+- (id)initWithModelURL:(NSURL *)inModelURL persistentStoreURL:(NSURL *)inPersistentStoreURL;
 
 - (BOOL)prepare:(NSError **)outError;
 

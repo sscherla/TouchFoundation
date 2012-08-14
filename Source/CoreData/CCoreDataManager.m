@@ -34,7 +34,30 @@
 @synthesize managedObjectContextClass;
 @synthesize managedObjectContext;
 
-- (id)initWithModelURL:(NSURL *)inModelURL PersistentStoreURL:(NSURL *)inPersistentStoreURL
+- (id)initWithApplicationDefaults;
+    {
+    NSBundle *theBundle = [NSBundle mainBundle];
+    NSString *theBundleName = [theBundle infoDictionary][(__bridge NSString *)kCFBundleNameKey];
+    // TODO - we should search for all .momd and .mom files and combine them perhaps?
+    NSURL *theModelURL = [theBundle URLForResource:theBundleName withExtension:@"momd"];
+
+    NSError *theError = NULL;
+    NSURL *theApplicationSupportDirectory = [[NSFileManager defaultManager] URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:NULL create:YES error:&theError];
+
+    theApplicationSupportDirectory = [theApplicationSupportDirectory URLByAppendingPathComponent:theBundle.bundleIdentifier];
+    [[NSFileManager defaultManager] createDirectoryAtURL:theApplicationSupportDirectory withIntermediateDirectories:YES attributes:NULL error:&theError];
+
+    NSURL *thePersistentStoreURL = [[theApplicationSupportDirectory URLByAppendingPathComponent:theBundleName] URLByAppendingPathExtension:@"sqlite"];
+
+    if ((self = [self initWithModelURL:theModelURL persistentStoreURL:thePersistentStoreURL]) != NULL)
+        {
+        }
+    return self;
+    }
+
+
+
+- (id)initWithModelURL:(NSURL *)inModelURL persistentStoreURL:(NSURL *)inPersistentStoreURL
     {
     if ((self = [super init]) != NULL)
         {
