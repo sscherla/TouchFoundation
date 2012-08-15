@@ -68,6 +68,10 @@
         #if DEBUG == 1
         managedObjectContextClass = [CDebuggingManagedObjectContext class];
         #endif
+        persistentStoreOptions = @{
+            NSMigratePersistentStoresAutomaticallyOption : @(YES),
+            NSInferMappingModelAutomaticallyOption : @(YES),
+            };
         }
     return self;
     }
@@ -102,65 +106,6 @@
     return(managedObjectContext);
     }
 
-- (BOOL)prepare:(NSError **)outError
-    {
-    if (persistentStoreCoordinator == NULL)
-        {
-        if ([self.persistentStoreURL checkResourceIsReachableAndReturnError:outError] == YES)
-            {
-            NSDictionary *theSourceMetadata = [NSPersistentStoreCoordinator metadataForPersistentStoreOfType:NSSQLiteStoreType URL:self.persistentStoreURL error:outError];        
-            if (theSourceMetadata == NULL)
-                {
-                return(NO);
-                }
-            BOOL theCompatibilityFlag = [self.managedObjectModel isConfiguration:NULL compatibleWithStoreMetadata:theSourceMetadata];
-            if (theCompatibilityFlag == NO)
-                {
-                #warning TODO We should NOT delete the core data model on actual device except in direst emergencies
-                NSLog(@"***** Persistent store is not compatible with model configuration. Migration needed.");
-                NSLog(@"***** Removing old persistent store.");
-                
-                if ([[NSFileManager defaultManager] removeItemAtURL:self.persistentStoreURL error:outError] == NO)
-                    {
-                    return(NO);
-                    }
-                }
-            }
-        
-        persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:self.managedObjectModel];
-        NSError *theError = NULL;
-        NSPersistentStore *thePersistentStore = NULL;
-        
-        @try
-            {
-            thePersistentStore = [self.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:NULL URL:self.persistentStoreURL options:self.persistentStoreOptions error:&theError];
-            }
-        @catch (NSException *exception)
-            {
-            NSLog(@"Exception: %@", exception);
-            @throw exception;
-            }
-        if (thePersistentStore == NULL)
-            {
-            if (outError != NULL)
-                {
-                *outError = theError;
-                }
-            return(NO);
-            }
-        }
-    
-    if (managedObjectContext == NULL)
-        {
-        managedObjectContext = [[self.managedObjectContextClass alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
-        #if DEBUG == 1
-        managedObjectContext.debugName = @"main";
-        #endif
-        [managedObjectContext performBlockAndWait:^{
-            managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
-            }];
-        }
-    return(YES);
-    }
+
 
 @end

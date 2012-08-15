@@ -23,6 +23,4 @@
 
 - (id)initWithModelURL:(NSURL *)inModelURL persistentStoreURL:(NSURL *)inPersistentStoreURL;
 
-- (BOOL)prepare:(NSError **)outError;
-
 @end
