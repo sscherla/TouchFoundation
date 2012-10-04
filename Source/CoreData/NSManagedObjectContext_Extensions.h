@@ -58,4 +58,6 @@
 
 - (id)objectWithURL:(NSURL *)inURL;
 
+- (id)insertNewEntityForName:(NSString *)name;
+
 @end

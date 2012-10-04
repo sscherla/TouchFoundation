@@ -291,4 +291,9 @@ return(theCount);
     return(theObject);   
     }
 
+- (id)insertNewEntityForName:(NSString *)name
+	{
+    return([NSEntityDescription insertNewObjectForEntityForName:name inManagedObjectContext:self]);
+	}
+
 @end
