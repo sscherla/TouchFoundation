@@ -39,6 +39,7 @@
 #endif
 
 - (NSManagedObjectContext *)newChildManagedObjectContext;
+- (NSManagedObjectContext *)newChildManagedObjectContextWithConcurrencyType:(NSManagedObjectContextConcurrencyType)ct;
 
 - (NSUInteger)countOfObjectsOfEntityForName:(NSString *)inEntityName predicate:(NSPredicate *)inPredicate error:(NSError **)outError;
 
@@ -49,6 +50,7 @@
 - (id)fetchObjectOfEntityForName:(NSString *)inEntityName predicate:(NSPredicate *)inPredicate error:(NSError **)outError;
 
 - (id)fetchObjectOfEntityForName:(NSString *)inEntityName properties:(NSDictionary *)inProperties createIfNotFound:(BOOL)inCreateIfNotFound wasCreated:(BOOL *)outWasCreated error:(NSError **)outError;
+- (id)fetchObjectOfEntityForName:(NSString *)inEntityName properties:(NSDictionary *)inProperties error:(NSError **)outError;
 
 - (void)assertHasNoChanges;
 - (void)logChanges;

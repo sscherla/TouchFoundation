@@ -69,11 +69,16 @@ static void *kDebugNameKey;
 
 #endif
 
-- (NSManagedObjectContext *)newChildManagedObjectContext
+- (NSManagedObjectContext *)newChildManagedObjectContextWithConcurrencyType:(NSManagedObjectContextConcurrencyType)ct
     {
-    NSManagedObjectContext *theChildManagedObjectContext = [[[self class] alloc] initWithConcurrencyType:self.concurrencyType];
+    NSManagedObjectContext *theChildManagedObjectContext = [[[self class] alloc] initWithConcurrencyType:ct];
     theChildManagedObjectContext.parentContext = self;
     return(theChildManagedObjectContext);
+    }
+
+- (NSManagedObjectContext *)newChildManagedObjectContext
+    {
+	return([self newChildManagedObjectContextWithConcurrencyType:self.concurrencyType]);
     }
 
 - (NSUInteger)countOfObjectsOfEntityForName:(NSString *)inEntityName predicate:(NSPredicate *)inPredicate error:(NSError **)outError
@@ -129,7 +134,6 @@ return(theCount);
     {
     id theObject = NULL;
     
-    
     NSMutableArray *theSubpredicates = [NSMutableArray array];
     
     [inProperties enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
@@ -145,7 +149,6 @@ return(theCount);
         {
         thePredicate = [[NSCompoundPredicate alloc] initWithType:NSAndPredicateType subpredicates:theSubpredicates];
         }
-    
     
     NSArray *theObjects = [self fetchObjectsOfEntityForName:inEntityName predicate:thePredicate error:outError];
     BOOL theWasCreatedFlag = NO;
@@ -187,6 +190,11 @@ return(theCount);
         
     return(theObject);
     }
+
+- (id)fetchObjectOfEntityForName:(NSString *)inEntityName properties:(NSDictionary *)inProperties error:(NSError **)outError;
+	{
+	return([self fetchObjectOfEntityForName:inEntityName properties:inProperties createIfNotFound:NO wasCreated:NULL error:outError]);
+	}
 
 #pragma mark -
 
