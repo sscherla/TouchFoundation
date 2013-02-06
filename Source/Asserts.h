@@ -52,7 +52,7 @@
 			if (theObject_ != NULL) \
 				{ \
 				Class theDesiredClass_ = [CLS_ class]; \
-				NSAssert2([theObject_ isKindOfClass:theDesiredClass_], @"Object %@ not of class %@", theObject_, NSStringFromClass(theDesiredClass_)); \
+				AssertC_([theObject_ isKindOfClass:theDesiredClass_], @"Object %@ not of class %@", theObject_, NSStringFromClass(theDesiredClass_)); \
 				} \
 			(CLS_ *)theObject_; \
 			})
