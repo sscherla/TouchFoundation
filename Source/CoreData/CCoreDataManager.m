@@ -63,6 +63,11 @@
         {
         _modelURL = inModelURL;
         managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:self.modelURL];
+		if (managedObjectModel == NULL)
+			{
+			self = NULL;
+			return(NULL);
+			}
         persistentStoreURL = inPersistentStoreURL;
         managedObjectContextClass = [NSManagedObjectContext class];
         #if DEBUG == 1
